@@ -1,0 +1,67 @@
+﻿@using Tmc.Web.Framework.Menu
+@{
+    var siteMap = new XmlSiteMap();
+    siteMap.LoadFrom("~/Administration/sitemap.config");
+}
+
+@helper RenderMenuItem(Tmc.Web.Framework.Menu.SiteMapNode node)
+{
+    string url = "";
+    if(!string.IsNullOrEmpty(node.ControllerName) && ! string.IsNullOrEmpty(node.ActionName))
+    {
+        url = Url.Action(node.ActionName, node.ControllerName, node.RouteValues, null, null);
+    }
+    else
+    {
+        if(!string.IsNullOrEmpty(node.Url))
+        {
+            url = node.Url.StartsWith("~/", StringComparison.Ordinal) ? Url.Content(node.Url) : node.Url;
+        }
+    }
+    <li>
+        
+        @if (!String.IsNullOrEmpty(url))
+        {
+            <a href="@url">
+                @if (!String.IsNullOrEmpty(node.ImageUrl))
+                {
+                    <text>
+                        <img alt="" src="@Url.Content(node.ImageUrl)" />
+                    </text>
+                }
+                @node.Title
+            </a>
+        }
+        else
+        {
+            if (!String.IsNullOrEmpty(node.ImageUrl))
+            {
+                <text>
+                    <img alt="" src="@Url.Content(node.ImageUrl)" />
+                </text>
+            }
+            @node.Title
+        }
+        @if (node.ChildNodes.Any(x => x.Visible))
+        {
+            <ul>
+                @foreach (var childItem in node.ChildNodes.Where(x => x.Visible))
+                {
+                    @RenderMenuItem(childItem)
+                }
+            </ul>
+        }
+    </li>
+}
+
+<ul id="admin-menu">
+    @foreach (var item in siteMap.RootNode.ChildNodes.Where(x => x.Visible))
+    {
+        @RenderMenuItem(item)
+    }
+</ul>
+<script>
+    $(document).ready(function () {
+        $("#admin-menu").kendoMenu();
+    });
+</script>
