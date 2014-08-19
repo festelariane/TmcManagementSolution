@@ -15,6 +15,7 @@ using Tmc.BLL.Contract.Cards;
 using Tmc.BLL.Impl.Cards;
 using Tmc.Web.Framework.Routes;
 using Tmc.Core.Common;
+using Tmc.Data.DatabaseContext;
 
 namespace Tmc.Web.Framework
 {
@@ -40,6 +41,15 @@ namespace Tmc.Web.Framework
 
 
             builder.RegisterType<RouteRegistrar>().As<IRouteRegistrar>().SingleInstance();
+
+
+
+
+            var efDataProviderManager = new EfDataProviderManager(dataSettingsManager.LoadSettings());
+            var dataProvider = efDataProviderManager.LoadDataProvider();
+            dataProvider.InitConnectionFactory();
+
+            builder.Register<IDbContext>(c => new TmcObjectContext(dataProviderSettings.DataConnectionString)).InstancePerRequest();
         }
 
         public int Order

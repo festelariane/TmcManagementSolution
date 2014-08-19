@@ -81,10 +81,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\TmcDependencyResolver.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="DependencyRegistrar.cs" />
     <Compile Include="Menu\SiteMapNode.cs" />
     <Compile Include="Menu\XmlSiteMap.cs" />
+    <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Routes\IRouteProvider.cs" />
     <Compile Include="Routes\IRouteRegistrar.cs" />

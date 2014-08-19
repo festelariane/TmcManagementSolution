@@ -98,6 +98,25 @@ namespace Tmc.Core.DependencyManagement
             }
             return scope.ResolveKeyed<T>(key);
         }
+
+        public object ResolveOptional(Type serviceType, ILifetimeScope scope = null)
+        {
+            if (scope == null)
+            {
+                //no scope specified
+                scope = Scope();
+            }
+            return scope.ResolveOptional(serviceType);
+        }
+        public object Resolve(Type type, ILifetimeScope scope = null)
+        {
+            if (scope == null)
+            {
+                //no scope specified
+                scope = Scope();
+            }
+            return scope.Resolve(type);
+        }
     }
 
     public static class ContainerManagerExtensions

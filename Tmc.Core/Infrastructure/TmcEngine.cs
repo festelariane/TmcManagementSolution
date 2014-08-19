@@ -59,5 +59,9 @@ namespace Tmc.Core.Infrastructure
         {
             return ContainerManager.Resolve<T>();
         }
+        public object Resolve(Type type)
+        {
+            return ContainerManager.Resolve(type);
+        }
     }
 }

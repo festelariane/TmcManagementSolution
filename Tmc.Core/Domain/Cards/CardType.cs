@@ -12,5 +12,7 @@ namespace Tmc.Core.Domain.Cards
         public double ExchangeRate { get; set; }
         public decimal Threshold { get; set; }
         public int DisplayOrder { get; set; }
+
+        public int Level { get; set; }
     }
 }

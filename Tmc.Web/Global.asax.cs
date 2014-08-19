@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Tmc.Core.Infrastructure;
+using Tmc.Web.Framework.Common;
 using Tmc.Web.Framework.Themes;
 
 namespace Tmc.Web
@@ -18,6 +19,7 @@ namespace Tmc.Web
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             ViewEngines.Engines.Clear();
             ViewEngines.Engines.Add(new TmcThemeableRazorViewEngine());
+            DependencyResolver.SetResolver(new TmcDependencyResolver());
         }
     }
 }

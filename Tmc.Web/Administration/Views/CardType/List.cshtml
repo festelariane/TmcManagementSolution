@@ -1,0 +1,68 @@
+﻿@using Tmc.Admin.Models
+
+@model CardTypeListModel
+@{
+    ViewBag.Title = "List";
+
+    var gridPageSize = 10;
+}
+
+<h2>List</h2>
+
+<div id="grid-cardtypes"></div>
+<script type="text/javascript">
+
+    function additionalData() {
+        return {
+            SearchCardTypeName: $('#@Html.IdFor(model => model.SearchCardTypeName)').val()
+        };
+    }
+
+
+    $(document).ready(function () {
+        $("#grid-cardtypes").kendoGrid(
+            {
+                dataSource: {
+                    type: "json",
+                    transport: {
+                        read: {
+                            url: "@Html.Raw(Url.Action("List","CardType"))",
+                            type: "POST",
+                            dataType: "json",
+                            data: additionalData
+                        },
+                        create: {
+                            url: "",
+                            typ
+                        }
+                    },
+                    schema: {
+                        data: "Data",
+                        total: "Total",
+                        errors:"Errors"
+                    },
+                    error: function (e) {
+                        display_kendoui_grid_error(e);
+                        // Cancel the changes
+                        this.cancelChanges();
+                    },
+                    pageSize:@(gridPageSize),
+                    serverPaging:true,
+                    serverFiltering:true,
+                    serverSorting:true
+
+                },
+                pageable: true,
+                height: 550,
+                toolbar: ["create"],
+                columns:[
+                {field:"Name", title:"Card Type"},
+                {field:"ExchangeRate", title:"Exchange Rate"},
+                {field:"Threshold", title:"Threshold"},
+                {field:"Level", title:"Level"},
+                {field:"DisplayOrder", title:"Display Order"},
+                ]
+
+            });
+    });
+</script>
