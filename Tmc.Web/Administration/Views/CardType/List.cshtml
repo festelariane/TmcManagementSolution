@@ -28,25 +28,34 @@
                         read: {
                             url: "@Html.Raw(Url.Action("List","CardType"))",
                             type: "POST",
-                            dataType: "json",
-                            data: additionalData
+                            dataType: "json"
                         },
                         create: {
-                            url: "",
-                            typ
+                            url: "@Html.Raw(Url.Action("Create","CardType"))",
+                            dataType: "JSON",
+                            type: "POST",
+                            completed: function(jqXhr, textStatus) {
+                                if (textStatus == "success") {
+                                    alert('add completed');
+                                }
+                            }
                         }
                     },
                     schema: {
                         data: "Data",
                         total: "Total",
-                        errors:"Errors"
+                        errors: "Errors"
                     },
-                    error: function (e) {
+                    error: function(e) {
+                        alert('vo error' + e);
                         display_kendoui_grid_error(e);
                         // Cancel the changes
                         this.cancelChanges();
                     },
-                    pageSize:@(gridPageSize),
+                    success: function() {
+                        alert('ok');
+                    },
+                    pageSize: @(gridPageSize),
                     serverPaging:true,
                     serverFiltering:true,
                     serverSorting:true
@@ -61,8 +70,9 @@
                 {field:"Threshold", title:"Threshold"},
                 {field:"Level", title:"Level"},
                 {field:"DisplayOrder", title:"Display Order"},
-                ]
-
+                    {command:["edit","destroy"],title:"", width:"200px"}
+                ],
+                editable:"inline"
             });
     });
 </script>

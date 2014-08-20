@@ -84,6 +84,8 @@
     <Compile Include="Common\TmcDependencyResolver.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="DependencyRegistrar.cs" />
+    <Compile Include="KendoUi\DataSourceRequest.cs" />
+    <Compile Include="KendoUi\DataSourceResult.cs" />
     <Compile Include="Menu\SiteMapNode.cs" />
     <Compile Include="Menu\XmlSiteMap.cs" />
     <Compile Include="Models\BaseModel.cs" />
