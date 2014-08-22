@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
-using Tmc.Admin.Models;
+using Tmc.Admin.Models.CardTypes;
 using Tmc.BLL.Contract.Cards;
 using Tmc.Core.Domain.Cards;
 using Tmc.Web.Framework.KendoUi;
@@ -48,14 +45,15 @@ namespace Tmc.Admin.Controllers
             };
             return Json(gridModel);
         }
-        public ActionResult Create()
-        {
-            return View();
-        }
+        //public ActionResult Create()
+        //{
+        //    return View();
+        //}
 
         [HttpPost]
         public ActionResult Create(string models)
         {
+
             return View();
         }
 
