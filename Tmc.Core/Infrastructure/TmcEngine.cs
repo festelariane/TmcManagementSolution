@@ -49,11 +49,24 @@ namespace Tmc.Core.Infrastructure
         }
         public void Initialize(TmcConfig config)
         {
+            RunStartupTasks();
             //startup tasks
             if (!config.IgnoreStartupTasks)
             {
                 //RunStartupTasks();
             }
+        }
+        private void RunStartupTasks()
+        {
+            var typeFinder = _containerManager.Resolve<ITypeFinder>();
+            var startUpTaskTypes = typeFinder.FindClassesOfType<IStartupTask>();
+            var startUpTasks = new List<IStartupTask>();
+            foreach (var startUpTaskType in startUpTaskTypes)
+                startUpTasks.Add((IStartupTask)Activator.CreateInstance(startUpTaskType));
+            //sort
+            startUpTasks = startUpTasks.AsQueryable().OrderBy(st => st.Order).ToList();
+            foreach (var startUpTask in startUpTasks)
+                startUpTask.Execute();
         }
         public T Resolve<T>() where T : class
         {

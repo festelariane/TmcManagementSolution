@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using Tmc.Web.Framework.Models;
 
-namespace Tmc.Admin.Models
+namespace Tmc.Admin.Models.CardTypes
 {
     public class CardTypeListModel : BaseModel
     {
