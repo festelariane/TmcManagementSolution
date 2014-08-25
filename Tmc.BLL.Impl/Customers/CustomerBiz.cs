@@ -18,10 +18,18 @@ namespace Tmc.BLL.Impl.Customers
         {
             this._customerRepository = customerRepository;
         }
-        public IPagedList<Customer> GetAllCustomers(int pageIndex = 0, int pageSize = 2147483647)
+        public IPagedList<Customer> GetAllCustomers(string userName, string fullName, int pageIndex = 0, int pageSize = 2147483647)
         {
-            var query = _customerRepository.Table.OrderBy(c => c.UserName);
-
+            var query = _customerRepository.Table;
+            if(!string.IsNullOrEmpty(userName))
+            {
+                query = query.Where(c => c.UserName.Contains(userName.Trim()));
+            }
+            if (!string.IsNullOrWhiteSpace(fullName))
+            {
+                query = query.Where(c => c.UserName.Contains(fullName.Trim()));
+            }
+            query = query.OrderBy(c => c.UserName);
             return new PagedList<Customer>(query, pageIndex, pageSize); ;
         }
 

@@ -4,6 +4,9 @@ using Tmc.Admin.Models.CardTypes;
 using Tmc.BLL.Contract.Cards;
 using Tmc.Core.Domain.Cards;
 using Tmc.Web.Framework.KendoUi;
+using Tmc.Admin.Extensions;
+using System.Linq;
+using Tmc.Web.Framework.Common;
 
 namespace Tmc.Admin.Controllers
 {
@@ -24,7 +27,6 @@ namespace Tmc.Admin.Controllers
         }
         public ActionResult List()
         {
-            var cardTypes = _cardTypeBiz.GetAllCardTypes();
             return View();
         }
 
@@ -34,44 +36,58 @@ namespace Tmc.Admin.Controllers
             var cardTypes = _cardTypeBiz.GetAllCardTypes();
             var gridModel = new DataSourceResult
             {
-                Data = new List<CardType>{new CardType()},
-                //Data = cardTypes.Select(x =>
-                //{
-                //    var categoryModel = x.ToModel();
-                //    categoryModel.Breadcrumb = x.GetFormattedBreadCrumb(_categoryService);
-                //    return categoryModel;
-                //}),
-                Total = 0
+                Data = cardTypes.Select(x =>
+                {
+                    var cardTypeModel = x.ToModel();
+                    return cardTypeModel;
+                }),
+                Total = cardTypes.Count
             };
             return Json(gridModel);
         }
-        //public ActionResult Create()
-        //{
-        //    return View();
-        //}
 
         [HttpPost]
-        public ActionResult Create(string models)
+        public ActionResult Create([Bind(Exclude = "Id")] CardTypeModel model)
         {
+            if(ModelState.IsValid)
+            {
+                var cardType = model.ToEntity();
+                var insertedCardType = _cardTypeBiz.InsertCardType(cardType);
 
-            return View();
-        }
-
-        public ActionResult Edit()
-        {
-            return View();
+                return Json(insertedCardType);
+            }
+            return new NullJsonResult();
         }
 
         [HttpPost]
-        public ActionResult Edit(string models)
+        public ActionResult Edit(CardTypeModel model)
         {
-            return View();
+            if (!ModelState.IsValid)
+            {
+                return Json(new DataSourceResult() { Errors = ModelState.SerializeErrors() });
+            }
+
+            var cardType = _cardTypeBiz.GetCardTypeById(model.Id);
+            if(cardType == null)
+            {
+                return Content("No card type could be loaded with the specified ID");
+            }
+            cardType = model.ToEntity(cardType);
+            _cardTypeBiz.UpdateCardType(cardType);
+
+            return new NullJsonResult();
         }
 
         [HttpPost]
-        public ActionResult Delete(string models)
+        public ActionResult Delete(CardTypeModel model)
         {
-            return View();
+            var cardType = _cardTypeBiz.GetCardTypeById(model.Id);
+            if (cardType == null)
+            {
+                return Content("No card type with the specified ID");
+            }
+            _cardTypeBiz.DeleteCardType(cardType);
+            return new NullJsonResult();
         }
 	}
 }

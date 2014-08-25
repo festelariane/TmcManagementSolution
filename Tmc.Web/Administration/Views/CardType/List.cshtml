@@ -1,78 +1,89 @@
-﻿@using Tmc.Admin.Models
+﻿@using Tmc.Admin.Models.CardTypes
 
 @model CardTypeListModel
 @{
+    //ViewBag.Title = "List";
     ViewBag.Title = "List";
-
     var gridPageSize = 10;
 }
 
 <h2>List</h2>
 
+
 <div id="grid-cardtypes"></div>
-<script type="text/javascript">
-
-    function additionalData() {
-        return {
-            SearchCardTypeName: $('#@Html.IdFor(model => model.SearchCardTypeName)').val()
-        };
-    }
 
 
-    $(document).ready(function () {
-        $("#grid-cardtypes").kendoGrid(
-            {
-                dataSource: {
-                    type: "json",
-                    transport: {
-                        read: {
-                            url: "@Html.Raw(Url.Action("List","CardType"))",
-                            type: "POST",
-                            dataType: "json"
-                        },
-                        create: {
-                            url: "@Html.Raw(Url.Action("Create","CardType"))",
-                            dataType: "JSON",
-                            type: "POST",
-                            completed: function(jqXhr, textStatus) {
-                                if (textStatus == "success") {
-                                    alert('add completed');
+            <script>
+                $(document).ready(function () {
+                    var crudServiceBaseUrl = "http://demos.telerik.com/kendo-ui/service",
+                        dataSource = new kendo.data.DataSource({
+                            transport: {
+                                read:  {
+                                    url: "@Html.Raw(Url.Action("List", "CardType"))",
+                                    type: "POST",
+                                    dataType: "json"
+                                },
+                                update: {
+                                    url:"@Html.Raw(Url.Action("Edit", "CardType"))",
+                                    dataType: "json",
+                                    type: "POST"
+                                },
+                                destroy: {
+                                    url:"@Html.Raw(Url.Action("Delete", "CardType"))",
+                                    dataType: "json",
+                                    type: "POST"
+                                },
+                                create: {
+                                    url:"@Html.Raw(Url.Action("Create", "CardType"))",
+                                    dataType: "json",
+                                    type: "POST"
+                                },
+                                parameterMap: function(options, operation) {
+                                    if (operation !== "read" && options.models) {
+                                        return options.models[0];// {model: kendo.stringify(options.models[0])};
+                                    }
+                                }
+                            },
+                            batch: true,
+                            pageSize: 20,
+                            schema: {
+                                data: "Data",
+                                total: "Total",
+                                errors: "Errors",
+                                model: {
+                                    id: "Id",
+                                    fields: {
+                                        Id: { editable: false, type: "string",nullable: true },
+                                        Name: { validation: { required: true } },
+                                        ExchangeRate: { editable: true, type: "number" },
+                                        Threshold: { editable: true, type: "number"},
+                                        DisplayOrder: { editable: true, type: "number"},
+                                        Level: { editable: true, type: "number"}
+
+                                    }
+                                }
+                            },
+                            requestEnd: function (e) {
+                                if (e.type == "create" || e.type == "update") {
+                                    this.read();
                                 }
                             }
-                        }
-                    },
-                    schema: {
-                        data: "Data",
-                        total: "Total",
-                        errors: "Errors"
-                    },
-                    error: function(e) {
-                        alert('vo error' + e);
-                        display_kendoui_grid_error(e);
-                        // Cancel the changes
-                        this.cancelChanges();
-                    },
-                    success: function() {
-                        alert('ok');
-                    },
-                    pageSize: @(gridPageSize),
-                    serverPaging:true,
-                    serverFiltering:true,
-                    serverSorting:true
+                        });
 
-                },
-                pageable: true,
-                height: 550,
-                toolbar: ["create"],
-                columns:[
-                {field:"Name", title:"Card Type"},
-                {field:"ExchangeRate", title:"Exchange Rate"},
-                {field:"Threshold", title:"Threshold"},
-                {field:"Level", title:"Level"},
-                {field:"DisplayOrder", title:"Display Order"},
-                    {command:["edit","destroy"],title:"", width:"200px"}
-                ],
-                editable:"inline"
-            });
-    });
-</script>
+                    $("#grid-cardtypes").kendoGrid({
+                        dataSource: dataSource,
+                        pageable: true,
+                        height: 450,
+                        toolbar: ["create"],
+                        columns: [
+                            { field: "Name", title: "Name" },
+                            { field: "ExchangeRate", title: "ExchangeRate" },
+                            { field: "Threshold", title: "Threshold"},
+                            { field: "Level", title: "Level"},
+                            { field: "DisplayOrder", title: "DisplayOrder"},
+                            { command: ["edit", "destroy"], title: "&nbsp;", width: "200px" }],
+                        editable: "inline"
+                    });
+                });
+            </script>
+

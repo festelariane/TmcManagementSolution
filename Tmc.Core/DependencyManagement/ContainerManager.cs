@@ -117,6 +117,42 @@ namespace Tmc.Core.DependencyManagement
             }
             return scope.Resolve(type);
         }
+
+        public T ResolveUnregistered<T>(ILifetimeScope scope = null) where T : class
+        {
+            return ResolveUnregistered(typeof(T), scope) as T;
+        }
+
+        public object ResolveUnregistered(Type type, ILifetimeScope scope = null)
+        {
+            if (scope == null)
+            {
+                //no scope specified
+                scope = Scope();
+            }
+            var constructors = type.GetConstructors();
+            foreach (var constructor in constructors)
+            {
+                try
+                {
+                    var parameters = constructor.GetParameters();
+                    var parameterInstances = new List<object>();
+                    foreach (var parameter in parameters)
+                    {
+                        var service = Resolve(parameter.ParameterType, scope);
+                        if (service == null) throw new TmcException("Unkown dependency");
+                        parameterInstances.Add(service);
+                    }
+                    return Activator.CreateInstance(type, parameterInstances.ToArray());
+                }
+                catch (TmcException)
+                {
+
+                }
+            }
+            throw new TmcException("No contructor was found that had all the dependencies satisfied.");
+        }
+        
     }
 
     public static class ContainerManagerExtensions

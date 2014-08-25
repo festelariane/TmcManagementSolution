@@ -4,18 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tmc.BLL.Contract.Cards;
+using Tmc.Core;
 using Tmc.Core.Data;
 using Tmc.Core.Domain.Cards;
+using Tmc.Core.Domain.Customers;
 
 namespace Tmc.BLL.Impl.Cards
 {
     public class CardTypeBiz : ICardTypeBiz
     {
         private readonly IRepository<CardType> _cardTypeRepository;
-
-        public CardTypeBiz(IRepository<CardType> cardTypeRepository)
+        private readonly IRepository<Customer> _customerRepository;
+        public CardTypeBiz(IRepository<CardType> cardTypeRepository, IRepository<Customer> customerRepository)
         {
             this._cardTypeRepository = cardTypeRepository;
+            this._customerRepository = customerRepository;
         }
         public IList<CardType> GetAllCardTypes()
         {
@@ -37,6 +40,12 @@ namespace Tmc.BLL.Impl.Cards
         {
             if (cardType == null)
                 throw new ArgumentNullException("cardType");
+
+            var numOfCustomer = _customerRepository.Table.Where(c => c.CardTypeId == cardType.Id).Count();
+            if(numOfCustomer > 0)
+            {
+                throw new TmcException("Cannot delete this card type because it is being used");
+            }
 
             _cardTypeRepository.Delete(cardType);
         }

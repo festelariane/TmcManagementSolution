@@ -40,6 +40,7 @@ namespace Tmc.Data
                 if (entity == null)
                     throw new ArgumentNullException("entity");
                 this.Entities.Add(entity);
+                this._context.SaveChanges();
             }
             catch (DbEntityValidationException dbEx)
             {
