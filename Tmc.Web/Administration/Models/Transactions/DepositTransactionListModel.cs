@@ -5,13 +5,12 @@ using System.Web;
 using System.Web.Mvc;
 using Tmc.Web.Framework.Models;
 
-namespace Tmc.Admin.Models.Customers
+namespace Tmc.Admin.Models.Transactions
 {
-    public class CustomerListModel : BaseModel
+    public class DepositTransactionListModel : BaseModel
     {
         [AllowHtml]
         public string SearchUserName { get; set; }
         public string SearchFullName { get; set; }
-
     }
 }

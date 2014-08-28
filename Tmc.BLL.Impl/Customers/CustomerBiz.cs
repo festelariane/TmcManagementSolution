@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Tmc.BLL.Contract.Customers;
 using Tmc.Core.Common;
 using Tmc.Core.Data;
+using Tmc.Core.Domain.Cards;
 using Tmc.Core.Domain.Customers;
 
 namespace Tmc.BLL.Impl.Customers
@@ -13,10 +14,12 @@ namespace Tmc.BLL.Impl.Customers
     public class CustomerBiz : ICustomerBiz
     {
         private readonly IRepository<Customer> _customerRepository;
+        private readonly IRepository<CardType> _cardTypeRepository;
 
-        public CustomerBiz(IRepository<Customer> customerRepository)
+        public CustomerBiz(IRepository<Customer> customerRepository, IRepository<CardType> cardTypeRepository)
         {
             this._customerRepository = customerRepository;
+            this._cardTypeRepository = cardTypeRepository;
         }
         public IPagedList<Customer> GetAllCustomers(string userName, string fullName, int pageIndex = 0, int pageSize = 2147483647)
         {
@@ -30,7 +33,7 @@ namespace Tmc.BLL.Impl.Customers
                 query = query.Where(c => c.UserName.Contains(fullName.Trim()));
             }
             query = query.OrderBy(c => c.UserName);
-            return new PagedList<Customer>(query, pageIndex, pageSize); ;
+            return new PagedList<Customer>(query, pageIndex, pageSize);
         }
 
         public Customer GetCustomerById(int customerId)
@@ -54,7 +57,11 @@ namespace Tmc.BLL.Impl.Customers
         {
             if (customer == null)
                 throw new ArgumentNullException("customer");
-
+            var cardType = _cardTypeRepository.GetById(customer.CardTypeId);
+            if (cardType == null)
+            {
+                throw new ArgumentNullException("Please assign Card Type");
+            }
             _customerRepository.Update(customer);
         }
 
@@ -62,6 +69,15 @@ namespace Tmc.BLL.Impl.Customers
         {
             if (customer == null)
                 throw new ArgumentNullException("customer");
+
+            var cardType = _cardTypeRepository.GetById(customer.CardTypeId);
+            if(cardType == null)
+            {
+                throw new ArgumentNullException("Please assign Card Type");
+            }
+            customer.CreatedOnUtc = DateTime.Now;
+            customer.UpdatedOnUtc = customer.CreatedOnUtc;
+            customer.LastActivityDateUtc = customer.CreatedOnUtc;
 
             _customerRepository.Insert(customer);
             return customer;
