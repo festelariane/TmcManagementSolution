@@ -9,6 +9,7 @@ using System.Linq;
 using Tmc.Web.Framework.Common;
 using Tmc.BLL.Contract.Customers;
 using Tmc.Admin.Models.Customers;
+using System;
 
 namespace Tmc.Admin.Controllers
 {
@@ -54,6 +55,7 @@ namespace Tmc.Admin.Controllers
             if(ModelState.IsValid)
             {
                 var customer = model.ToEntity();
+
                 var insertedCustomer = _customerBiz.InsertCustomer(customer);
 
                 return Json(insertedCustomer);
@@ -62,7 +64,7 @@ namespace Tmc.Admin.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit(CustomerModel model)
+        public ActionResult Edit([Bind(Exclude = "CreatedOnUtc, UpdatedOnUtc, LastActivityDateUtc")] CustomerModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -74,7 +76,10 @@ namespace Tmc.Admin.Controllers
             {
                 return Content("No customer could be loaded with the specified ID");
             }
-            customer = model.ToEntity(customer);
+            customer.CardTypeId = model.CardTypeId.GetValueOrDefault(0);
+            customer.FullName = model.FullName;
+            customer.Points = model.Points;
+
             _customerBiz.UpdateCustomer(customer);
 
             return new NullJsonResult();
