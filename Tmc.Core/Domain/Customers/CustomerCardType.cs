@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tmc.Core.Domain.Customers;
+using Tmc.Core.Domain.Cards;
 
-namespace Tmc.Core.Domain.Cards
+namespace Tmc.Core.Domain.Customers
 {
     public class CustomerCardType : BaseEntity
     {

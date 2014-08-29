@@ -15,5 +15,7 @@ namespace Tmc.BLL.Contract.Transactions
         void DeleteDepositTransaction(DepositTransaction depTran);
         void UpdateDepositTransaction(DepositTransaction depTran);
         DepositTransaction InsertDepositTransaction(DepositTransaction depTran);
+
+        bool Deposit(int customerId, decimal depositAmount);
     }
 }

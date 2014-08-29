@@ -13,151 +13,206 @@
 
 
 <div id="grid-customers"></div>
+<div id="customer-deposit-dialog" title="Deposit" style="display:none">
+    <input id="deposit-amount" type="number" value="0" min="0" max="100000000" step="1" />
+</div>	
 
-
-            <script>
-                $(document).ready(function () {
-                        dataSource = new kendo.data.DataSource({
-                            transport: {
-                                read:  {
-                                    url: "@Html.Raw(Url.Action("List", "Customer"))",
-                                    type: "POST",
-                                    dataType: "json"
-                                },
-                                update: {
-                                    url:"@Html.Raw(Url.Action("Edit", "Customer"))",
-                                    dataType: "json",
-                                    type: "POST"
-                                },
-                                destroy: {
-                                    url:"@Html.Raw(Url.Action("Delete", "Customer"))",
-                                    dataType: "json",
-                                    type: "POST"
-                                },
-                                create: {
-                                    url:"@Html.Raw(Url.Action("Create", "Customer"))",
-                                    dataType: "json",
-                                    type: "POST"
-                                },
-                                parameterMap: function(options, operation) {
-                                    if (operation !== "read" && options.models) {
-                                        return options.models[0];// {model: kendo.stringify(options.models[0])};
-                                    }
-                                }
-                            },
-                            batch: true,
-                            pageSize: 20,
-                            schema: {
-                                data: "Data",
-                                total: "Total",
-                                errors: "Errors",
-                                model: {
-                                    id: "Id",
-                                    fields: {
-                                        Id: { editable: false, type: "string",nullable: true },
-                                        CardTypeId: { editable: true },
-                                        CardType:{},
-                                        UserName: { editable: true},
-                                        FullName: { editable: true},
-                                        Points: { editable: false},
-                                        CreatedOnUtc: { editable: false,type: 'date', format: 'dd/MM/yyyy'},
-                                        UpdatedOnUtc: { editable: false,type: 'date', format: 'dd/MM/yyyy'},
-                                        LastActivityDateUtc: { editable: false,type: 'date', format: 'dd/MM/yyyy'}
-                                    }
-                                }
-                            },
-                            requestEnd: function (e) {
-                                if (e.type == "create" || e.type == "update") {
-                                    this.read();
-                                }
-                            }
-                        });
-
-                    $("#grid-customers").kendoGrid({
-                        dataSource: dataSource,
-                        pageable: true,
-                        height: 450,
-                        toolbar: ["create"],
-                        columns: [
-                            {
-                                title:"Action",
-                                template: "<a>Deposit</a>"
-                            },
-                            { field: "UserName", title: "UserName" },
-                            { field: "FullName", title: "FullName" },
-                            {
-                                field: "CardTypeId",
-                                title: "CardType",
-                                width: 200,
-                                editor: cardTypeDropdownEditor,
-                                template:"#: CardType.Name #"
-                                //template:kendo.template($("#myTemplate").html())
-                            },
-                            { field: "Points", title: "Points" },
-                            { field: "CreatedOnUtc", title: "CreatedOnUtc",format:"{0:dd-MM-yyyy}"  },
-                            { field: "UpdatedOnUtc", title: "UpdatedOnUtc" ,format:"{0:dd-MM-yyyy}"},
-                            { field: "LastActivityDateUtc", title: "LastActivityDateUtc",format:"{0:dd-MM-yyyy}" },
-                            { command: ["edit", "destroy"], title: "&nbsp;", width: "200px" }],
-                        editable: "inline",
-                        edit:function(e)
-                        {
-                            if(e.model.isNew())
-                            {
-                                if(allCardTypes.length > 0)
-                                {
-                                    e.model.CardTypeId = allCardTypes[0].Id;
-                                }
-                            }
-                            else
-                            {
-                                $(e.container).find('input[name="UserName"]').attr("readonly", true);
-                            }
-                        }
-                    });
-                });
-
-
-
-
-                //Load local datasource - All card types:
-                @{
-                    var cardTypeBiz = EngineContext.Current.Resolve<ICardTypeBiz>();
-                    var allCardTypes = cardTypeBiz.GetAllCardTypes();
-                }
-
-                var allCardTypes = [
-                    {
-                        Id: 0,
-                        Name: "-- Please select --"
-                    }
-                    @for (int i = 0; i < allCardTypes.Count; i++)
-                    {
-                        <text>,</text>
-                        var cardType = allCardTypes[i];
-                        <text>
-                            {
-                                Id: @(cardType.Id),
-                                Name: "@cardType.Name"
-                            }
-                        </text>
-                        @*if (i != allCardTypes.Count - 1)
-                        {
-                                <text>,</text>
-                        }*@
-                    }
-                ];
-
-                function cardTypeDropdownEditor(container, options)
+<script>
+    function resetDepositForm()
+    {
+        $("#deposit-amount").val(0);
+    }
+    $(document).ready(function () {
+        $("#customer-deposit-dialog").dialog({
+            autoOpen: false, width: 300, height: 200, resizable: false, modal: true,
+            
+            close: function()
+            {
+                resetDepositForm();
+            },
+            buttons:
+            {
+                "Deposit": function()
                 {
-                    //$('<input data-bind="value:"' + options.field + '"/>')
-                    $('<input required data-text-field="Name" data-value-field="Id" data-bind="value:CardTypeId"/>')
-                        .appendTo(container)
-                        .kendoDropDownList(
+                    var parentDlg = $(this);
+
+                    var customerId = $(this).data('customer-id');
+                    var amount = parseInt($("#deposit-amount").val());
+                    $.ajax({
+                        cache: false,
+                        type: "POST",
+                        url: "@Url.Action("CustomerDeposit","Transaction")",
+                        data: JSON.stringify({"customerId":customerId, "amount":amount}),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                    success: function(data)
+                    {
+                        parentDlg.dialog("close");
+                        if(dataSource != null)
                         {
-                            //dataTextField: "Name",
-                            //dataValueField: "Id",
-                            autoBind: false,
-                            dataSource: allCardTypes
-                        });
+                            dataSource.read();
+                        }
+                            
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Error...Please check...');
+                        //parentDlg.dialog("close");
+                    }
+                });
+                },
+                "Cancel": function () {
+                    $(this).dialog("close");
+                }                
+            }
+        });
+        $("#deposit-amount").kendoNumericTextBox();
+
+            dataSource = new kendo.data.DataSource({
+                transport: {
+                    read:  {
+                        url: "@Html.Raw(Url.Action("List", "Customer"))",
+                        type: "POST",
+                        dataType: "json"
+                    },
+                    update: {
+                        url:"@Html.Raw(Url.Action("Edit", "Customer"))",
+                        dataType: "json",
+                        type: "POST"
+                    },
+                    destroy: {
+                        url:"@Html.Raw(Url.Action("Delete", "Customer"))",
+                        dataType: "json",
+                        type: "POST"
+                    },
+                    create: {
+                        url:"@Html.Raw(Url.Action("Create", "Customer"))",
+                        dataType: "json",
+                        type: "POST"
+                    },
+                    parameterMap: function(options, operation) {
+                        if (operation !== "read" && options.models) {
+                            return options.models[0];// {model: kendo.stringify(options.models[0])};
+                        }
+                    }
+                },
+                batch: true,
+                pageSize: 20,
+                schema: {
+                    data: "Data",
+                    total: "Total",
+                    errors: "Errors",
+                    model: {
+                        id: "Id",
+                        fields: {
+                            Id: { editable: false, type: "string",nullable: true },
+                            CardTypeId: { editable: true },
+                            CardType:{},
+                            UserName: { editable: true},
+                            FullName: { editable: true},
+                            Points: { editable: true, type: "number", validation: { min: 0}},
+                            CreatedOnUtc: { editable: false,type: 'date', format: 'dd/MM/yyyy'},
+                            UpdatedOnUtc: { editable: false,type: 'date', format: 'dd/MM/yyyy'},
+                            LastActivityDateUtc: { editable: false,type: 'date', format: 'dd/MM/yyyy'}
+                        }
+                    }
+                },
+                requestEnd: function (e) {
+                    if (e.type == "create" || e.type == "update") {
+                        this.read();
+                    }
                 }
-            </script>
+            });
+
+        $("#grid-customers").kendoGrid({
+            dataSource: dataSource,
+            pageable: true,
+            height: 450,
+            toolbar: ["create"],
+            columns: [
+                {
+                    title:"Action",
+                    template: '<a id="btn-customer-deposit" href="javascript:void(0)" onclick="onCustomerDeposit(#=Id#)">Deposit</a>'
+                },
+                { field: "UserName", title: "UserName" },
+                { field: "FullName", title: "FullName" },
+                {
+                    field: "CardTypeId",
+                    title: "CardType",
+                    width: 200,
+                    editor: cardTypeDropdownEditor,
+                    template:"#: CardType.Name #"
+                    //template:kendo.template($("#myTemplate").html())
+                },
+                { field: "Points", title: "Points"},
+                { field: "CreatedOnUtc", title: "CreatedOnUtc",format:"{0:dd-MM-yyyy}"  },
+                { field: "UpdatedOnUtc", title: "UpdatedOnUtc" ,format:"{0:dd-MM-yyyy}"},
+                { field: "LastActivityDateUtc", title: "LastActivityDateUtc",format:"{0:dd-MM-yyyy}" },
+                { command: ["edit", "destroy"], title: "&nbsp;", width: "200px" }],
+            editable: "inline",
+            edit:function(e)
+            {
+                if(e.model.isNew())
+                {
+                    if(allCardTypes.length > 0)
+                    {
+                        e.model.CardTypeId = allCardTypes[0].Id;
+                    }
+                }
+                else
+                {
+                    $(e.container).find('input[name="UserName"]').attr("readonly", true);
+                }
+            }
+        });
+    });
+
+
+
+
+    //Load local datasource - All card types:
+    @{
+        var cardTypeBiz = EngineContext.Current.Resolve<ICardTypeBiz>();
+        var allCardTypes = cardTypeBiz.GetAllCardTypes();
+    }
+
+    var allCardTypes = [
+        {
+            Id: 0,
+            Name: "-- Please select --"
+        }
+        @for (int i = 0; i < allCardTypes.Count; i++)
+        {
+            <text>,</text>
+            var cardType = allCardTypes[i];
+            <text>
+                {
+                    Id: @(cardType.Id),
+                    Name: "@cardType.Name"
+                }
+            </text>
+            @*if (i != allCardTypes.Count - 1)
+            {
+                    <text>,</text>
+            }*@
+        }
+    ];
+
+    function cardTypeDropdownEditor(container, options)
+    {
+        //$('<input data-bind="value:"' + options.field + '"/>')
+        $('<input required data-text-field="Name" data-value-field="Id" data-bind="value:CardTypeId"/>')
+            .appendTo(container)
+            .kendoDropDownList(
+            {
+                //dataTextField: "Name",
+                //dataValueField: "Id",
+                autoBind: false,
+                dataSource: allCardTypes
+            });
+    }
+
+    function onCustomerDeposit(customerId)
+    {
+        $("#customer-deposit-dialog").data("customer-id",customerId).dialog("open");
+    }
+</script>

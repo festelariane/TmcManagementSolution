@@ -169,6 +169,7 @@
     <Content Include="Views\CardType\List.cshtml" />
     <Content Include="Views\Customer\List.cshtml" />
     <Content Include="Views\Transaction\List.cshtml" />
+    <Content Include="Views\Transaction\_TransactionListing.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

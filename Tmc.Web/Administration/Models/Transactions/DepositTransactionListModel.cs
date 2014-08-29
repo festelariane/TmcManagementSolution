@@ -10,7 +10,8 @@ namespace Tmc.Admin.Models.Transactions
     public class DepositTransactionListModel : BaseModel
     {
         [AllowHtml]
-        public string SearchUserName { get; set; }
-        public string SearchFullName { get; set; }
+        public int? customerId { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
     }
 }

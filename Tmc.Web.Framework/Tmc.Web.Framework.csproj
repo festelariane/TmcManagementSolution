@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\NullJsonResult.cs" />
+    <Compile Include="Common\TmcAjaxResponse.cs" />
     <Compile Include="Common\TmcDependencyResolver.cs" />
     <Compile Include="Common\TmcModelBinder.cs" />
     <Compile Include="Controllers\BaseController.cs" />

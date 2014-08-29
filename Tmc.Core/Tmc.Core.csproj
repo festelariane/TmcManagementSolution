@@ -94,8 +94,9 @@
     <Compile Include="DependencyManagement\ContainerManager.cs" />
     <Compile Include="DependencyManagement\IDependencyRegistrar.cs" />
     <Compile Include="Domain\Cards\CardType.cs" />
-    <Compile Include="Domain\Cards\CustomerCardType.cs" />
     <Compile Include="Domain\Customers\Customer.cs" />
+    <Compile Include="Domain\Customers\CustomerCardType.cs" />
+    <Compile Include="Domain\Customers\CustomerRole.cs" />
     <Compile Include="Domain\Transactions\DepositTransaction.cs" />
     <Compile Include="Infrastructure\AppDomainTypeFinder.cs" />
     <Compile Include="Infrastructure\EngineContext.cs" />

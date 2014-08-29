@@ -68,5 +68,31 @@ namespace Tmc.BLL.Impl.Transactions
             _depositTranRepository.Insert(depTran);
             return depTran;
         }
+
+        public bool Deposit(int customerId, decimal depositAmount)
+        {
+            var customer = _customerRepository.GetById(customerId);
+            if (customer == null)
+            {
+                throw new ArgumentNullException("Cannot find specified customer");
+            }
+            if(customer.CardType == null)
+            {
+                throw new ArgumentNullException("This customer doesn't have a valid card type");
+            }
+            var points = (decimal)(customer.CardType.ExchangeRate* (double)depositAmount);
+            var depositTran = new DepositTransaction();
+            depositTran.Customer = customer;
+            depositTran.Amount = depositAmount;
+            depositTran.Points = points;
+            depositTran.CreatedOnUtc = DateTime.Now;
+            depositTran.ExchangeRate = customer.CardType.ExchangeRate;
+
+            _depositTranRepository.Insert(depositTran);
+
+            customer.Points = customer.Points + points;
+            _customerRepository.Update(customer);
+            return true;
+        }
     }
 }

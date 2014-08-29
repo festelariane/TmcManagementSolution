@@ -1,0 +1,122 @@
+﻿@model DepositTransactionListModel
+@using Tmc.Admin.Models.Transactions;
+@{
+    ViewBag.Title = "_TransactionListing";
+}
+
+<h2>_TransactionListing</h2>
+
+<div id="grid-transactions"></div>
+
+<script type="text/x-kendo-template" id="transaction-listing-toolbar-template">
+    <div class="toolbar">
+        <label for="transaction-date-from">From:</label>
+        <input type="text" id="transaction-date-from" style="width: 150px" />
+        <label for="transaction-date-from">To:</label>
+        <input type="text" id="transaction-date-to" style="width: 150px" />
+
+        <input type="button" id="btn-search-transaction" onclick="onSearchTransaction()" style="width: 150px" value="Search" />
+    </div>
+</script>
+
+<script>
+    function onSearchTransaction()
+    {
+        //var dateFrom = $("#transaction-date-from").data("kendoDateTimePicker").value();
+        //var dateTo = $("#transaction-date-to").data("kendoDateTimePicker").value();
+        var grid = $('#grid-transactions').data('kendoGrid');
+        grid.dataSource.page(1); //new search. Set page size to 1
+        grid.dataSource.read();
+    }
+    function additionalData() {
+        //var dateFrom = null;
+        //if ($("#transaction-date-from").data("kendoDateTimePicker") != null)
+        //{
+        //    dateFrom = $("#transaction-date-from").data("kendoDateTimePicker").value();
+        //}
+        //var dateTo = null;
+        //if ($("#transaction-date-to").data("kendoDateTimePicker") != null) {
+        //    dateTo = $("#transaction-date-to").data("kendoDateTimePicker").value();
+        //}
+        return {
+            customerId: 1,
+            DateFrom: dateFrom,
+            DateTo: dateTo
+        };
+        //return {
+        //    customerId: 1,
+        //    DateFrom: null,
+        //    DateTo: null
+        //};
+    }
+    $(document).ready(function () {
+        var transactionDataSource = new kendo.data.DataSource(
+            {
+                transport: {
+                    read:  {
+                        url: "@Html.Raw(Url.Action("List", "Transaction"))",
+                        type: "POST",
+                        dataType: "json",
+                        data: additionalData
+                }
+                },
+                batch: true,
+                pageSize: 20,
+                schema: {
+                    data: "Data",
+                    total: "Total",
+                    errors: "Errors",
+                    model: {
+                        id: "Id",
+                        fields: {
+                            Id: { editable: false, type: "string", nullable: true },
+                            CustomerId: { editable: false },
+                            CustomerName: {},
+                            Amount: { editable: false, type: 'number' },
+                            CreatedOnUtc: { editable: false, type: 'date', format: 'dd/MM/yyyy' },
+                            Points: { editable: false, type: 'number'},
+                            ExchangeRate: { editable: false, type: 'number' }
+                        }
+                    }
+                }
+            });
+
+        $("#grid-transactions").kendoGrid({
+            dataSource: transactionDataSource,
+            pageable: true,
+            toolbar: kendo.template($("#transaction-listing-toolbar-template").html()),
+            columns: [
+                {
+                    field: "CustomerName",
+                    title: "UserName",
+                },
+                {
+                    field: "Amount",
+                    title: "Amount"
+                },
+                {
+                    field: "Points",
+                    title: "Points"
+                },
+                {
+                    field: "ExchangeRate",
+                    title: "ExchangeRate"
+                },
+                {
+                    field: "CreatedOnUtc",
+                    title: "CreatedOnUtc",
+                    format: "{0:dd-MM-yyyy}"
+                },
+            ]
+        });
+
+        $("#transaction-date-from").kendoDateTimePicker({
+            animation: false,
+            format: "MM/dd/yyyy"
+        });
+        $("#transaction-date-to").kendoDateTimePicker({
+            animation: false,
+            format: "MM/dd/yyyy"
+        });
+    });
+</script>

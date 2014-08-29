@@ -92,7 +92,9 @@
     <Compile Include="EfRepository.cs" />
     <Compile Include="Initializers\CreateTablesIfNotExist.cs" />
     <Compile Include="Mapping\CardTypeMap.cs" />
+    <Compile Include="Mapping\CustomerCardTypeMap.cs" />
     <Compile Include="Mapping\CustomerMap.cs" />
+    <Compile Include="Mapping\CustomerRoleMap.cs" />
     <Compile Include="Mapping\DepositTransactionMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

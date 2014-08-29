@@ -16,6 +16,8 @@ using Tmc.BLL.Impl.Cards;
 using Tmc.Web.Framework.Routes;
 using Tmc.Core.Common;
 using Tmc.Data.DatabaseContext;
+using Tmc.BLL.Impl.Transactions;
+using Tmc.BLL.Contract.Transactions;
 
 namespace Tmc.Web.Framework
 {
@@ -38,7 +40,7 @@ namespace Tmc.Web.Framework
 
             builder.RegisterType<CustomerBiz>().As<ICustomerBiz>().InstancePerRequest();
             builder.RegisterType<CardTypeBiz>().As<ICardTypeBiz>().InstancePerRequest();
-
+            builder.RegisterType<DepositTransactionBiz>().As<IDepositTransactionBiz>().InstancePerRequest();
 
             builder.RegisterType<RouteRegistrar>().As<IRouteRegistrar>().SingleInstance();
 
