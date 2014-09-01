@@ -4,8 +4,6 @@
     ViewBag.Title = "_TransactionListing";
 }
 
-<h2>_TransactionListing</h2>
-
 <div id="grid-transactions"></div>
 
 <script type="text/x-kendo-template" id="transaction-listing-toolbar-template">
@@ -29,17 +27,19 @@
         grid.dataSource.read();
     }
     function additionalData() {
-        //var dateFrom = null;
-        //if ($("#transaction-date-from").data("kendoDateTimePicker") != null)
-        //{
-        //    dateFrom = $("#transaction-date-from").data("kendoDateTimePicker").value();
-        //}
-        //var dateTo = null;
-        //if ($("#transaction-date-to").data("kendoDateTimePicker") != null) {
-        //    dateTo = $("#transaction-date-to").data("kendoDateTimePicker").value();
-        //}
+        var dateFrom = null;
+        if ($("#transaction-date-from").data("kendoDateTimePicker") != null)
+        {
+            dateFrom = $("#transaction-date-from").data("kendoDateTimePicker").value();
+        }
+        var dateTo = null;
+        if ($("#transaction-date-to").data("kendoDateTimePicker") != null) {
+            dateTo = $("#transaction-date-to").data("kendoDateTimePicker").value();
+        }
+        var customerId = @if(Model.customerId == null){<text>""</text>} else{<text>@Model.customerId</text>};
+
         return {
-            customerId: 1,
+            customerId: customerId,
             DateFrom: dateFrom,
             DateTo: dateTo
         };
@@ -109,7 +109,7 @@
                 },
             ]
         });
-
+      
         $("#transaction-date-from").kendoDateTimePicker({
             animation: false,
             format: "MM/dd/yyyy"

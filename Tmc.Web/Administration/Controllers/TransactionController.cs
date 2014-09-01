@@ -22,9 +22,11 @@ namespace Tmc.Admin.Controllers
         }
         //
         // GET: /Transaction/
-        public ActionResult List()
+        public ActionResult List(int? customerId)
         {
-            return View();
+            var model = new DepositTransactionListModel();
+            model.customerId = customerId;
+            return View(model);
         }
 
         [HttpPost]
@@ -33,12 +35,6 @@ namespace Tmc.Admin.Controllers
             var customers = _depositTransactionBiz.GetAllDepositTransactions(model.customerId, model.DateFrom, model.DateTo, command.Page, command.PageSize);
             var gridModel = new DataSourceResult
             {
-                //CustomerId: { editable: false },
-                //            Customer: {},
-                //            Amount: { editable: false, type: 'number' },
-                //            CreatedOnUtc: { editable: false, type: 'date', format: 'dd/MM/yyyy' },
-                //            Points: { editable: false, type: 'number'},
-                //            ExchangeRate: { editable: false, type: 'number' 
                 Data = customers.Select(x => new {
                     CustomerId = x.CustomerId,
                     CustomerName = x.Customer.UserName,
@@ -47,15 +43,9 @@ namespace Tmc.Admin.Controllers
                     Points = x.Points,
                     ExchangeRate = x.ExchangeRate
                 }),
-                //Data = customers.Select(x =>
-                //{
-                //    var transactionModel = x.ToModel();
-                //    return transactionModel;
-                //}),
                 Total = customers.TotalCount
             };
             return Json(gridModel);
-            return null;
         }
 
         [HttpPost]

@@ -17,6 +17,10 @@
     <input id="deposit-amount" type="number" value="0" min="0" max="100000000" step="1" />
 </div>	
 
+<script type="text/x-kendo-template" id="deposit-row-template">
+    <a id="btn-customer-deposit" href="javascript:void(0)" onclick="onCustomerDeposit(#=Id#)">Deposit</a>
+    <a id="btn-customer-deposit" href="@Url.Action("List", "Transaction")/?customerId=#=Id#">Transaction Listing</a>
+</script>
 <script>
     function resetDepositForm()
     {
@@ -131,7 +135,8 @@
             columns: [
                 {
                     title:"Action",
-                    template: '<a id="btn-customer-deposit" href="javascript:void(0)" onclick="onCustomerDeposit(#=Id#)">Deposit</a>'
+                    template: kendo.template($("#deposit-row-template").html())
+                    //template: '<a id="btn-customer-deposit" href="javascript:void(0)" onclick="onCustomerDeposit(#=Id#)">Deposit</a>'
                 },
                 { field: "UserName", title: "UserName" },
                 { field: "FullName", title: "FullName" },
