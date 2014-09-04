@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authentication\IAuthenticationBiz.cs" />
     <Compile Include="Cards\ICardTypeBiz.cs" />
     <Compile Include="Customers\ICustomerBiz.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
