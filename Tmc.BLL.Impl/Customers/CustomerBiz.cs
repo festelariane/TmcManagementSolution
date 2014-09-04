@@ -82,5 +82,18 @@ namespace Tmc.BLL.Impl.Customers
             _customerRepository.Insert(customer);
             return customer;
         }
+
+        public virtual Customer GetCustomerByUserName(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+                return null;
+
+            var query = from c in _customerRepository.Table
+                        orderby c.Id
+                        where c.UserName == username
+                        select c;
+            var customer = query.FirstOrDefault();
+            return customer;
+        }
     }
 }

@@ -1,0 +1,40 @@
+﻿@model LoginModel
+@using Tmc.Web.Models.Customers;
+@using System.Web.Mvc.Html;
+@{
+    ViewBag.Title = "Login";
+}
+
+<div class="page login-page">
+    <div class="page-title">
+        <h2>Welcom To GiaLuc</h2>
+    </div>
+    <div class="page-body">
+        @using (Html.BeginForm())
+        {
+        <div class="message-error">
+            @Html.ValidationSummary(true, "Cannot login")
+        </div>
+        <div class="login-block">
+            <div class="inputs">
+                @Html.LabelFor(model=>model.UserName)
+                @Html.TextBoxFor(m => m.UserName, new { @class = "username", autofocus = "autofocus" })
+                @Html.ValidationMessageFor(m => m.UserName)
+            </div>
+            <div class="inputs">
+                @Html.LabelFor(model => model.Password)
+                @Html.PasswordFor(m => m.Password, new { @class = "password" })
+                @Html.ValidationMessageFor(m => m.Password)
+            </div>
+
+            @*<div class="inputs rememberme">
+                @Html.CheckBoxFor(model => model.RememberMe)
+                @Html.LabelFor(m => m.RememberMe)
+            </div>*@
+            <div class="buttons">
+                <input class="login-button" type="submit" value="Login" />
+            </div>
+        </div>
+        }
+    </div>
+</div>

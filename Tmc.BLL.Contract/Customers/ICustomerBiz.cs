@@ -15,5 +15,6 @@ namespace Tmc.BLL.Contract.Customers
         void DeleteCustomer(Customer customer);
         void UpdateCustomer(Customer customer);
         Customer InsertCustomer(Customer customer);
+        Customer GetCustomerByUserName(string username);
     }
 }

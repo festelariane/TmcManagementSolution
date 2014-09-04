@@ -14,6 +14,7 @@ namespace Tmc.Web.Controllers
             var model = new LoginModel();
             return View(model);
         }
+        [HttpPost]
         public ActionResult Login(LoginModel model, string returnUrl)
         {
             if(ModelState.IsValid)
