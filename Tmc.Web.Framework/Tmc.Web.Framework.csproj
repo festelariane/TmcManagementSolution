@@ -92,8 +92,10 @@
     <Compile Include="Common\TmcAjaxResponse.cs" />
     <Compile Include="Common\TmcDependencyResolver.cs" />
     <Compile Include="Common\TmcModelBinder.cs" />
+    <Compile Include="Common\UTCDateTimeModelBinder.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="DependencyRegistrar.cs" />
+    <Compile Include="FilterAttributes\AdminAuthorizeAttribute.cs" />
     <Compile Include="FluentValidation\TmcValidatorFactory.cs" />
     <Compile Include="KendoUi\DataSourceRequest.cs" />
     <Compile Include="KendoUi\DataSourceResult.cs" />
@@ -108,6 +110,7 @@
     <Compile Include="Themes\IThemeContext.cs" />
     <Compile Include="Themes\ThemeableVirtualPathProviderViewEngine.cs" />
     <Compile Include="Themes\TmcThemeableRazorViewEngine.cs" />
+    <Compile Include="WebWorkContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -131,6 +134,7 @@
       <Name>Tmc.Data</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

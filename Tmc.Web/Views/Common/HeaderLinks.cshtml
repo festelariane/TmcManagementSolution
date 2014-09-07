@@ -1,0 +1,20 @@
+﻿@model HeaderLinksModel
+@using Tmc.Web.Models.Common;
+
+@if(Model.IsAuthenticated)
+{
+    <div>
+        <span>Hello, @Model.CustomerName</span>
+        @if(Model.IsAdmin)
+        {
+            <a href="@Url.RouteUrl("AdminHomePage")">Go to Admin Panel</a>
+        }
+        else
+        {
+            <a href="@Url.RouteUrl("ManageTransactions")/?customerId=@Model.CustomerId">View Your Transaction List</a>
+        }
+    </div>
+    <div>
+        <a href="@Url.Action("Logout","Customer")">Logout</a>
+    </div>
+}

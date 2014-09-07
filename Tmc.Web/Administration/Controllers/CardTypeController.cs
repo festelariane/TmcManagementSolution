@@ -7,9 +7,11 @@ using Tmc.Web.Framework.KendoUi;
 using Tmc.Admin.Extensions;
 using System.Linq;
 using Tmc.Web.Framework.Common;
+using Tmc.Web.Framework.FilterAttributes;
 
 namespace Tmc.Admin.Controllers
 {
+    [AdminAuthorize]
     public class CardTypeController : BaseAdminController
     {
         private readonly ICardTypeBiz _cardTypeBiz;

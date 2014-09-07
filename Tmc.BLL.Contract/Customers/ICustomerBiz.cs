@@ -16,5 +16,48 @@ namespace Tmc.BLL.Contract.Customers
         void UpdateCustomer(Customer customer);
         Customer InsertCustomer(Customer customer);
         Customer GetCustomerByUserName(string username);
+
+        #region Customer roles
+
+        /// <summary>
+        /// Delete a customer role
+        /// </summary>
+        /// <param name="customerRole">Customer role</param>
+        void DeleteCustomerRole(CustomerRole customerRole);
+
+        /// <summary>
+        /// Gets a customer role
+        /// </summary>
+        /// <param name="customerRoleId">Customer role identifier</param>
+        /// <returns>Customer role</returns>
+        CustomerRole GetCustomerRoleById(int customerRoleId);
+
+        /// <summary>
+        /// Gets a customer role
+        /// </summary>
+        /// <param name="systemName">Customer role system name</param>
+        /// <returns>Customer role</returns>
+        CustomerRole GetCustomerRoleBySystemName(string systemName);
+
+        /// <summary>
+        /// Gets all customer roles
+        /// </summary>
+        /// <param name="showHidden">A value indicating whether to show hidden records</param>
+        /// <returns>Customer role collection</returns>
+        IList<CustomerRole> GetAllCustomerRoles();
+
+        /// <summary>
+        /// Inserts a customer role
+        /// </summary>
+        /// <param name="customerRole">Customer role</param>
+        void InsertCustomerRole(CustomerRole customerRole);
+
+        /// <summary>
+        /// Updates the customer role
+        /// </summary>
+        /// <param name="customerRole">Customer role</param>
+        void UpdateCustomerRole(CustomerRole customerRole);
+
+        #endregion
     }
 }

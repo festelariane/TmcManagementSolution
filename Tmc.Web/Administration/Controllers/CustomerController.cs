@@ -10,29 +10,35 @@ using Tmc.Web.Framework.Common;
 using Tmc.BLL.Contract.Customers;
 using Tmc.Admin.Models.Customers;
 using System;
+using Tmc.Web.Framework.FilterAttributes;
+using System.IO;
+using Tmc.BLL.Contract.ImportExport;
 
 namespace Tmc.Admin.Controllers
 {
+    [AdminAuthorize]
     public class CustomerController : BaseAdminController
     {
         private readonly ICustomerBiz _customerBiz;
-
-        public CustomerController(ICustomerBiz customerBiz)
+        private readonly IExportService _exportService;
+        public CustomerController(ICustomerBiz customerBiz, IExportService exportService)
         {
             this._customerBiz = customerBiz;
+            this._exportService = exportService;
         }
-        //
-        // GET: /CardType/
+
+        [AdminAuthorize]
         public ActionResult Index()
         {
             var model = new CardTypeListModel();
             return View(model);
         }
+        [AdminAuthorize]
         public ActionResult List()
         {
             return View();
         }
-
+        [AdminAuthorize]
         [HttpPost]
         public ActionResult List(DataSourceRequest command, CustomerListModel model)
         {
@@ -48,7 +54,7 @@ namespace Tmc.Admin.Controllers
             };
             return Json(gridModel);
         }
-
+        [AdminAuthorize]
         [HttpPost]
         public ActionResult Create([Bind(Exclude = "Id, Points, CreatedOnUtc, UpdatedOnUtc, LastActivityDateUtc")] CustomerModel model)
         {
@@ -62,7 +68,7 @@ namespace Tmc.Admin.Controllers
             }
             return new NullJsonResult();
         }
-
+        [AdminAuthorize]
         [HttpPost]
         public ActionResult Edit([Bind(Exclude = "CreatedOnUtc, UpdatedOnUtc, LastActivityDateUtc")] CustomerModel model)
         {
@@ -84,7 +90,7 @@ namespace Tmc.Admin.Controllers
 
             return new NullJsonResult();
         }
-
+        [AdminAuthorize]
         [HttpPost]
         public ActionResult Delete(CustomerModel model)
         {
@@ -95,6 +101,27 @@ namespace Tmc.Admin.Controllers
             }
             _customerBiz.DeleteCustomer(customer);
             return new NullJsonResult();
+        }
+
+        [AdminAuthorize]
+        public ActionResult ExportExcelAll()
+        {
+            try
+            {
+                var customers = _customerBiz.GetAllCustomers(string.Empty, string.Empty);
+
+                byte[] bytes = null;
+                using (var stream = new MemoryStream())
+                {
+                    _exportService.ExportCustomersToXlsx(stream, customers);
+                    bytes = stream.ToArray();
+                }
+                return File(bytes, "text/xls", "customers.xlsx");
+            }
+            catch (Exception exc)
+            {
+                return RedirectToAction("List");
+            }
         }
 	}
 }

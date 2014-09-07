@@ -17,11 +17,13 @@ namespace Tmc.Core.Domain.Customers
         }
         public string FullName { get; set; }
         public string UserName { get; set; }
+        public string Password { get; set; }
+        public string PasswordSalt { get; set; }
         public decimal Points { get; set; }
         public DateTime CreatedOnUtc { get; set; }
         public DateTime UpdatedOnUtc { get; set; }
         public DateTime LastActivityDateUtc { get; set; }
-
+        public DateTime? LastLoginDateUtc { get; set; }
         private ICollection<CustomerRole> _customerRoles;
         public virtual ICollection<CustomerRole> CustomerRoles
         {
@@ -30,7 +32,7 @@ namespace Tmc.Core.Domain.Customers
         }
 
         private ICollection<CardType> _cardTypeHistory;
-        public virtual ICollection<CardType> CardTypeHistory
+        public ICollection<CardType> CardTypeHistory
         {
             get { return _cardTypeHistory ?? (_cardTypeHistory = new List<CardType>()); }
             protected set { _cardTypeHistory = value; }

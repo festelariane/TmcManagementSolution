@@ -67,6 +67,10 @@
                                 if (e.type == "create" || e.type == "update") {
                                     this.read();
                                 }
+                            },
+                            errors: function(e)
+                            {
+                                alert(e);
                             }
                         });
 

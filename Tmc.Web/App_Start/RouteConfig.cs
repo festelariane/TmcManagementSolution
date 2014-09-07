@@ -27,6 +27,26 @@ namespace Tmc.Web
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional},
                 namespaces: new[] { "Tmc.Web.Controllers" }
             );
+
+            routes.MapRoute("HomePage",
+                "Home",
+                new { controller = "Home", action = "Index" },
+                new[] { "Tmc.Web.Controllers" });
+
+            routes.MapRoute("AdminHomePage",
+            "Admin",
+            new { controller = "Home", action = "Index" },
+            new[] { "Tmc.Admin.Controllers" });
+
+            routes.MapRoute("ManageTransactions",
+            "Transaction/List",
+            new { controller = "Transaction", action = "List" },
+            new[] { "Tmc.Admin.Controllers" });
+
+            //routes.MapRoute("Logout",
+            //                "logout",
+            //                new { controller = "Customer", action = "Logout" },
+            //                new[] { "Tmc.Web.Controllers" });
         }
     }
 }

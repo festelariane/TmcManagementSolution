@@ -10,6 +10,7 @@ namespace Tmc.Web.Controllers
     {
         //
         // GET: /Home/
+        [Authorize]
         public ActionResult Index()
         {
             return View();

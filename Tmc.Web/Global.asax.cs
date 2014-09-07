@@ -25,6 +25,9 @@ namespace Tmc.Web
             DependencyResolver.SetResolver(new TmcDependencyResolver());
 
             ModelBinders.Binders.Add(typeof(BaseModel), new TmcModelBinder());
+            var utcDateTimeModel = new UTCDateTimeModelBinder();
+            ModelBinders.Binders.Add(typeof(DateTime), utcDateTimeModel);
+            ModelBinders.Binders.Add(typeof(DateTime?), utcDateTimeModel);
 
             var validationProviderFactory = new TmcValidatorFactory();
             var validationProvider = new FluentValidationModelValidatorProvider(validationProviderFactory);

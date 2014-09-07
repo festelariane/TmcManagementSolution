@@ -18,6 +18,13 @@ using Tmc.Core.Common;
 using Tmc.Data.DatabaseContext;
 using Tmc.BLL.Impl.Transactions;
 using Tmc.BLL.Contract.Transactions;
+using Tmc.BLL.Impl.Security;
+using Tmc.BLL.Contract.Security;
+using Tmc.BLL.Contract.Authentication;
+using Tmc.BLL.Impl.Authentication;
+using System.Web;
+using Tmc.BLL.Impl.ImportExport;
+using Tmc.BLL.Contract.ImportExport;
 
 namespace Tmc.Web.Framework
 {
@@ -26,6 +33,23 @@ namespace Tmc.Web.Framework
 
         public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
         {
+            builder.Register(c => new HttpContextWrapper(HttpContext.Current) as HttpContextBase)
+                .As<HttpContextBase>()
+                .InstancePerRequest();
+
+            builder.Register(c => c.Resolve<HttpContextBase>().Request)
+                .As<HttpRequestBase>()
+                .InstancePerRequest();
+            builder.Register(c => c.Resolve<HttpContextBase>().Response)
+                .As<HttpResponseBase>()
+                .InstancePerRequest();
+            builder.Register(c => c.Resolve<HttpContextBase>().Server)
+                .As<HttpServerUtilityBase>()
+                .InstancePerRequest();
+            builder.Register(c => c.Resolve<HttpContextBase>().Session)
+                .As<HttpSessionStateBase>()
+                .InstancePerRequest();
+
             var dataSettingsManager = new DataSettingsManager();
 
             builder.RegisterType<WebHelper>().As<IWebHelper>().InstancePerRequest();
@@ -41,11 +65,11 @@ namespace Tmc.Web.Framework
             builder.RegisterType<CustomerBiz>().As<ICustomerBiz>().InstancePerRequest();
             builder.RegisterType<CardTypeBiz>().As<ICardTypeBiz>().InstancePerRequest();
             builder.RegisterType<DepositTransactionBiz>().As<IDepositTransactionBiz>().InstancePerRequest();
-
+            builder.RegisterType<EncryptionService>().As<IEncryptionService>().InstancePerRequest();
+            builder.RegisterType<CustomerRegistrationService>().As<ICustomerRegistrationService>().InstancePerRequest();
+            builder.RegisterType<FormAuthenticationBiz>().As<IAuthenticationBiz>().InstancePerRequest();
+            builder.RegisterType<ExportService>().As<IExportService>().InstancePerRequest();
             builder.RegisterType<RouteRegistrar>().As<IRouteRegistrar>().SingleInstance();
-
-
-
 
             var efDataProviderManager = new EfDataProviderManager(dataSettingsManager.LoadSettings());
             var dataProvider = efDataProviderManager.LoadDataProvider();

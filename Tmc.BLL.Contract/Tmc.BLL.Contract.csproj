@@ -42,8 +42,11 @@
   <ItemGroup>
     <Compile Include="Authentication\IAuthenticationBiz.cs" />
     <Compile Include="Cards\ICardTypeBiz.cs" />
+    <Compile Include="Customers\ICustomerRegistrationService.cs" />
     <Compile Include="Customers\ICustomerBiz.cs" />
+    <Compile Include="ImportExport\IExportService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\IEncryptionService.cs" />
     <Compile Include="Transactions\IDepositTransactionBiz.cs" />
   </ItemGroup>
   <ItemGroup>

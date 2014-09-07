@@ -1,0 +1,54 @@
+﻿@{
+    //ViewBag.Title = "List";
+    ViewBag.Title = "List";
+    var gridPageSize = 10;
+}
+
+<h2>List</h2>
+
+
+<div id="grid-customer-roles"></div>
+
+
+            <script>
+                $(document).ready(function () {
+                        dataSource = new kendo.data.DataSource({
+                            transport: {
+                                read:  {
+                                    url: "@Html.Raw(Url.Action("List", "CustomerRole"))",
+                                    type: "POST",
+                                    dataType: "json"
+                                }
+                            },
+                            batch: true,
+                            pageSize: 20,
+                            schema: {
+                                data: "Data",
+                                total: "Total",
+                                errors: "Errors",
+                                model: {
+                                    id: "Id",
+                                    fields: {
+                                        Id: { editable: false, type: "string",nullable: true },
+                                        Name: { editable: false, type: "string" },
+                                        SystemName: { editable: false, type: "string" },
+                                        IsSystemRole: { editable: false },
+                                        Active: { editable: false }
+                                    }
+                                }
+                            }
+                        });
+
+                    $("#grid-customer-roles").kendoGrid({
+                        dataSource: dataSource,
+                        pageable: true,
+                        height: 450,
+                        columns: [
+                            { field: "Name", title: "Name" },
+                            { field: "SystemName", title: "SystemName" },
+                            { field: "IsSystemRole", title: "IsSystemRole", template: '<input type="checkbox" #= IsSystemRole ? "checked=checked" : "" # disabled="disabled" ></input>' },
+                            { field: "Active", title: "Active", template: '<input type="checkbox" #= Active ? "checked=checked" : "" # disabled="disabled" ></input>' }]
+                    });
+                });
+            </script>
+

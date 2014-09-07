@@ -97,6 +97,8 @@
     <Compile Include="Domain\Customers\Customer.cs" />
     <Compile Include="Domain\Customers\CustomerCardType.cs" />
     <Compile Include="Domain\Customers\CustomerRole.cs" />
+    <Compile Include="Domain\Customers\SystemRoleNames.cs" />
+    <Compile Include="Domain\Extensions\CustomerExtensions.cs" />
     <Compile Include="Domain\Transactions\DepositTransaction.cs" />
     <Compile Include="Enums\LoginResult.cs" />
     <Compile Include="Infrastructure\AppDomainTypeFinder.cs" />

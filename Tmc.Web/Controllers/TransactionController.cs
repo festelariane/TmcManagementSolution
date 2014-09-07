@@ -5,38 +5,53 @@ using System.Linq;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
-using Tmc.Admin.Models.Customers;
-using Tmc.Admin.Models.Transactions;
 using Tmc.BLL.Contract.ImportExport;
 using Tmc.BLL.Contract.Transactions;
+using Tmc.Core.Common;
+using Tmc.Core.Domain.Customers;
 using Tmc.Web.Framework.Common;
 using Tmc.Web.Framework.FilterAttributes;
 using Tmc.Web.Framework.KendoUi;
 
-namespace Tmc.Admin.Controllers
+namespace Tmc.Web.Controllers
 {
-    public class TransactionController : BaseAdminController
+    public class TransactionController : BaseFrontEndController
     {
         private readonly IDepositTransactionBiz _depositTransactionBiz;
         private readonly IExportService _exportService;
-        public TransactionController(IDepositTransactionBiz depositTransactionBiz, IExportService exportService)
+        private readonly IWorkContext _workContext;
+        public TransactionController(IDepositTransactionBiz depositTransactionBiz, IExportService exportService, IWorkContext workContext)
         {
             this._depositTransactionBiz = depositTransactionBiz;
             this._exportService = exportService;
+            this._workContext = workContext;
         }
         //
         // GET: /Transaction/
         public ActionResult List(int? customerId)
         {
-            var model = new DepositTransactionListModel();
-            model.customerId = customerId;
-            return View(model);
+            var currentCustomer = _workContext.CurrentCustomer;
+            if (currentCustomer == null)
+            {
+                return new EmptyResult();
+            }
+            if (customerId == null || customerId.Value <= 0 || customerId.Value != currentCustomer.Id)
+            {
+                return new EmptyResult();
+            }
+            return  View(customerId.Value);
         }
 
         [HttpPost]
-        public ActionResult List(DataSourceRequest command, DepositTransactionListModel model)
+        public ActionResult List(DataSourceRequest command, int? customerId)
         {
-            var customers = _depositTransactionBiz.GetAllDepositTransactions(model.customerId, model.DateFrom, model.DateTo, command.Page, command.PageSize);
+            var currentCustomer = _workContext.CurrentCustomer;
+            if(currentCustomer == null || customerId == null || customerId.Value != currentCustomer.Id)
+            {
+                return new NullJsonResult();
+            }
+            
+            var customers = _depositTransactionBiz.GetAllDepositTransactions(currentCustomer.Id, null, null, command.Page, command.PageSize);
             var gridModel = new DataSourceResult
             {
                 Data = customers.Select(x => new {
@@ -50,41 +65,6 @@ namespace Tmc.Admin.Controllers
                 Total = customers.TotalCount
             };
             return Json(gridModel);
-        }
-
-        [HttpPost]
-        public ActionResult Create([Bind(Exclude = "Id")] DepositTransactionModel model)
-        {
-            //if (ModelState.IsValid)
-            //{
-            //    var customer = model.ToEntity();
-
-            //    var insertedCustomer = _customerBiz.InsertCustomer(customer);
-
-            //    return Json(insertedCustomer);
-            //}
-            return new NullJsonResult();
-        }
-
-        public ActionResult Deposit()
-        {
-            return null;
-        }
-
-        [HttpPost]
-        public ActionResult CustomerDeposit(int customerId, decimal amount)
-        {
-            bool bOk = false;
-            try
-            {
-                bOk = _depositTransactionBiz.Deposit(customerId, amount);
-                return Json(new TmcAjaxResponse() { Success = bOk });
-            }
-            catch(Exception ex)
-            {
-                return Json(new TmcAjaxResponse(){Success = bOk, Errors = new List<string>(){ex.ToString()}});
-            }
-            
         }
 
         [AdminAuthorize]

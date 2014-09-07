@@ -1,0 +1,9 @@
+﻿@model Int32
+@using Tmc.Admin.Models.Transactions;
+@{
+    ViewBag.Title = "List";
+}
+
+<h2>Transaction Listing</h2>
+
+@Html.Partial("_TransactionListing", Model)

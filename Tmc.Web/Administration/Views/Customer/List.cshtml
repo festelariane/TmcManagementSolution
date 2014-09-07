@@ -13,6 +13,9 @@
 
 
 <div id="grid-customers"></div>
+<div id="button-panel">
+
+</div>
 <div id="customer-deposit-dialog" title="Deposit" style="display:none">
     <input id="deposit-amount" type="number" value="0" min="0" max="100000000" step="1" />
 </div>	
@@ -131,7 +134,11 @@
             dataSource: dataSource,
             pageable: true,
             height: 450,
-            toolbar: ["create"],
+            toolbar: ["create",
+                {name: "ExportToExcel",
+                text: "Export All Customers To Excel",
+                onclick: function(e){alert('Export To Excel'); return false;}}
+            ],
             columns: [
                 {
                     title:"Action",
@@ -169,6 +176,8 @@
                 }
             }
         });
+
+        $("#grid-customers .k-grid-ExportToExcel").attr("href","@Url.Action("ExportExcelAll", "Customer")").attr("target","_blank");
     });
 
 

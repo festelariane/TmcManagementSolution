@@ -1,0 +1,80 @@
+﻿@model Int32
+@using Tmc.Admin.Models.Transactions;
+@{
+    ViewBag.Title = "_TransactionListing";
+}
+
+<div id="grid-transactions"></div>
+
+<script>
+
+    function additionalData() {
+        
+        var customerId = @if(Model == null){<text>""</text>} else{<text>@Model</text>};
+
+        return {
+            customerId: customerId
+        };
+    }
+    $(document).ready(function () {
+        var transactionDataSource = new kendo.data.DataSource(
+            {
+                transport: {
+                    read:  {
+                        url: "@Html.Raw(Url.Action("List", "Transaction"))",
+                        type: "POST",
+                        dataType: "json",
+                        data: additionalData
+                    }
+                },
+                batch: true,
+                pageSize: 20,
+                schema: {
+                    data: "Data",
+                    total: "Total",
+                    errors: "Errors",
+                    model: {
+                        id: "Id",
+                        fields: {
+                            Id: { editable: false, type: "string", nullable: true },
+                            CustomerId: { editable: false },
+                            CustomerName: {},
+                            Amount: { editable: false, type: 'number' },
+                            CreatedOnUtc: { editable: false, type: 'date', format: 'dd/MM/yyyy' },
+                            Points: { editable: false, type: 'number'},
+                            ExchangeRate: { editable: false, type: 'number' }
+                        }
+                    }
+                }
+            });
+
+        $("#grid-transactions").kendoGrid({
+            dataSource: transactionDataSource,
+            pageable: true,
+            //toolbar: kendo.template($("#transaction-listing-toolbar-template").html()),
+            columns: [
+                {
+                    field: "CustomerName",
+                    title: "UserName",
+                },
+                {
+                    field: "Amount",
+                    title: "Amount"
+                },
+                {
+                    field: "Points",
+                    title: "Points"
+                },
+                {
+                    field: "ExchangeRate",
+                    title: "ExchangeRate"
+                },
+                {
+                    field: "CreatedOnUtc",
+                    title: "CreatedOnUtc",
+                    format: "{0:dd-MM-yyyy}"
+                },
+            ]
+        });
+    });
+</script>

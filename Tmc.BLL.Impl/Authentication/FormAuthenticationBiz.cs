@@ -24,7 +24,7 @@ namespace Tmc.BLL.Impl.Authentication
             _expirationTimeSpan = FormsAuthentication.Timeout;
         }
 
-        public void SignIn(Customer customer, bool createPersistentCookie)
+        public virtual void SignIn(Customer customer, bool createPersistentCookie)
         {
             var now = DateTime.UtcNow.ToLocalTime();
             var ticket = new FormsAuthenticationTicket(1, customer.UserName, now, now.Add(_expirationTimeSpan), createPersistentCookie, customer.UserName, FormsAuthentication.FormsCookiePath);
@@ -41,13 +41,13 @@ namespace Tmc.BLL.Impl.Authentication
             _cachedCustomer = customer;
         }
 
-        public void SignOut()
+        public virtual void SignOut()
         {
             _cachedCustomer = null;
             FormsAuthentication.SignOut();
         }
 
-        public Customer GetAuthenticatedCustomer()
+        public virtual Customer GetAuthenticatedCustomer()
         {
             if(_cachedCustomer != null)
             {
@@ -74,9 +74,8 @@ namespace Tmc.BLL.Impl.Authentication
 
             if (String.IsNullOrWhiteSpace(userName))
                 return null;
-            //var customer = _customerBiz.;
-            //return customer;
-            return null;
+            var customer = _customerBiz.GetCustomerByUserName(userName);
+            return customer;
         }
     }
 }

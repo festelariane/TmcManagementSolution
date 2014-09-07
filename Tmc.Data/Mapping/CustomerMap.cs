@@ -15,6 +15,7 @@ namespace Tmc.Data.Mapping
             this.ToTable("Customer");
             this.HasKey(c => c.Id);
             this.Property(c => c.UserName).IsRequired().HasMaxLength(255);
+            this.Ignore(c => c.CardTypeHistory);
             this.HasMany(c => c.CustomerRoles)
                 .WithMany()
                 .Map(m => m.ToTable("Customer_CustomerRole_Mapping"));

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,7 +31,18 @@ namespace Tmc.BLL.Impl.Transactions
             {
                 query = query.Where(c => c.CustomerId == customerId.Value);
             }
-            
+            if(dateFromUtc.HasValue)
+            {
+                var fromDate = dateFromUtc.Value.Date;
+                //For better performance, shouldn't use TruncateTime.
+                //query = query.Where(dt => DbFunctions.TruncateTime(dt.CreatedOnUtc) >= dateFromUtc.Value.Date);
+                query = query.Where(dt => dt.CreatedOnUtc >= fromDate);
+            }
+            if (dateToUtc.HasValue)
+            {
+                var dateTo = dateToUtc.Value.Date.AddDays(1);
+                query = query.Where(dt => dt.CreatedOnUtc < dateTo);
+            }
             query = query.OrderByDescending(dt => dt.CreatedOnUtc);
             return new PagedList<DepositTransaction>(query, pageIndex, pageSize);
         }
