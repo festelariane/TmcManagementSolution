@@ -51,7 +51,7 @@ namespace Tmc.Web.Controllers
                 return new NullJsonResult();
             }
             
-            var customers = _depositTransactionBiz.GetAllDepositTransactions(currentCustomer.Id, null, null, command.Page, command.PageSize);
+            var customers = _depositTransactionBiz.GetAllDepositTransactions(currentCustomer.Id, null, null, null, command.Page, command.PageSize);
             var gridModel = new DataSourceResult
             {
                 Data = customers.Select(x => new {
@@ -72,7 +72,7 @@ namespace Tmc.Web.Controllers
         {
             try
             {
-                var transactions = _depositTransactionBiz.GetAllDepositTransactions(null, null, null);
+                var transactions = _depositTransactionBiz.GetAllDepositTransactions(null, null, null, null);
 
                 byte[] bytes = null;
                 using (var stream = new MemoryStream())

@@ -31,6 +31,10 @@ namespace Tmc.BLL.Impl.Authentication
             var encryptedTicket = FormsAuthentication.Encrypt(ticket);
             var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
             cookie.HttpOnly = true;
+            if (ticket.IsPersistent)
+            {
+                cookie.Expires = ticket.Expiration;
+            }
             cookie.Secure = FormsAuthentication.RequireSSL;
             cookie.Path = FormsAuthentication.FormsCookiePath;
             if(FormsAuthentication.CookieDomain != null)

@@ -24,12 +24,20 @@ namespace Tmc.BLL.Impl.Transactions
             this._customerRepository = customerRepository;
         }
 
-        public IPagedList<DepositTransaction> GetAllDepositTransactions(int? customerId, DateTime? dateFromUtc, DateTime? dateToUtc, int pageIndex = 0, int pageSize = 2147483647)
+        public IPagedList<DepositTransaction> GetAllDepositTransactions(int? customerId, string CustomerUserName, DateTime? dateFromUtc, DateTime? dateToUtc, int pageIndex = 0, int pageSize = 2147483647)
         {
             var query = _depositTranRepository.Table;
             if (customerId.GetValueOrDefault(0) > 0)
             {
                 query = query.Where(c => c.CustomerId == customerId.Value);
+            }
+            else
+            {
+                if(!string.IsNullOrWhiteSpace(CustomerUserName))
+                {
+                    query = query.Join(_customerRepository.Table.Where(c => c.UserName.Contains(CustomerUserName)), dt => dt.CustomerId, c => c.Id, (dt, c) => dt);
+                
+                }
             }
             if(dateFromUtc.HasValue)
             {

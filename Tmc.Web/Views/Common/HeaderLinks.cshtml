@@ -3,7 +3,7 @@
 
 @if(Model.IsAuthenticated)
 {
-    <div>
+    <div class="top-nav">
         <span>Hello, @Model.CustomerName</span>
         @if(Model.IsAdmin)
         {
@@ -13,8 +13,6 @@
         {
             <a href="@Url.RouteUrl("ManageTransactions")/?customerId=@Model.CustomerId">View Your Transaction List</a>
         }
-    </div>
-    <div>
         <a href="@Url.Action("Logout","Customer")">Logout</a>
     </div>
 }

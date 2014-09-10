@@ -10,7 +10,7 @@ namespace Tmc.BLL.Contract.Transactions
 {
     public interface IDepositTransactionBiz
     {
-        IPagedList<DepositTransaction> GetAllDepositTransactions(int? customerId, DateTime? dateFromUtc, DateTime? dateToUtc , int pageIndex = 0, int pageSize = 2147483647);
+        IPagedList<DepositTransaction> GetAllDepositTransactions(int? customerId, string CustomerUserName, DateTime? dateFromUtc, DateTime? dateToUtc , int pageIndex = 0, int pageSize = 2147483647);
         DepositTransaction GetDepositTransactionById(int depTranId);
         void DeleteDepositTransaction(DepositTransaction depTran);
         void UpdateDepositTransaction(DepositTransaction depTran);

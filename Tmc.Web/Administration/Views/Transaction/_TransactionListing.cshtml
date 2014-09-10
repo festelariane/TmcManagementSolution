@@ -8,18 +8,45 @@
 
 <script type="text/x-kendo-template" id="transaction-listing-toolbar-template">
     <div class="toolbar">
+        @if (Model.customerId == null)
+        {
+            <label for="transaction-username">Username:</label>
+            <input type="text" id="transaction-username" style="width: 150px" />
+        }
+
         <label for="transaction-date-from">From:</label>
         <input type="text" id="transaction-date-from" style="width: 150px" />
         <label for="transaction-date-from">To:</label>
         <input type="text" id="transaction-date-to" style="width: 150px" />
 
-        @*<input type="button" id="btn-search-transaction" onclick="onSearchTransaction()" style="width: 150px" value="Search" />*@
         <a href="javascript:void(0)" class="k-button k-button-icontext" onclick="onSearchTransaction()">Search</a>
-        <a href="@Url.Action("ExportExcelAll", "Transaction")" target="_blank" class="k-button k-button-icontext">Export Transaction to Excel</a>
+        <a href="@Url.Action("ExportExcelAll", "Transaction")" target="_blank" class="k-button k-button-icontext">Export All Transaction to Excel</a>
+     
+        <a href="javascript:void(0)" class="k-button k-button-icontext" onclick="onExportToExcel()">Export to Excel</a>
     </div>
 </script>
 
 <script>
+    function onExportToExcel()
+    {
+        $.ajax({
+            cache: false,
+            type: "POST",
+            url: "@Url.Action("ExportExcel", "Transaction")",
+            data: JSON.stringify(additionalData()),
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function(data)
+            {
+                var downloadUrl = "@Url.Action("DownloadExcel", "Download")/?key="+data;
+                window.open(downloadUrl, "_blank");
+                            
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert('Error...Please check...');
+            }
+        });
+    }
     function onSearchTransaction()
     {
         //var dateFrom = $("#transaction-date-from").data("kendoDateTimePicker").value();
@@ -38,18 +65,16 @@
         if ($("#transaction-date-to").data("kendoDatePicker") != null) {
             dateTo = $("#transaction-date-to").data("kendoDatePicker").value();
         }
+        var userName = $("#transaction-username").val();
         var customerId = @if(Model.customerId == null){<text>""</text>} else{<text>@Model.customerId</text>};
    
         return {
             customerId: customerId,
-            DateFrom: dateFrom,
-            DateTo: dateTo
+            DateFrom: dateFrom == null ? "" : dateFrom.toString(),
+            DateTo: dateTo == null ? "" : dateTo.toString(),
+            UserName:userName
         };
-        //return {
-        //    customerId: 1,
-        //    DateFrom: null,
-        //    DateTo: null
-        //};
+
     }
     $(document).ready(function () {
         var transactionDataSource = new kendo.data.DataSource(

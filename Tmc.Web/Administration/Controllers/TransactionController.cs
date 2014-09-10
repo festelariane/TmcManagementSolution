@@ -29,6 +29,10 @@ namespace Tmc.Admin.Controllers
         public ActionResult List(int? customerId)
         {
             var model = new DepositTransactionListModel();
+            if(customerId == null || customerId.Value <= 0)
+            {
+                customerId = null;
+            }
             model.customerId = customerId;
             return View(model);
         }
@@ -36,7 +40,7 @@ namespace Tmc.Admin.Controllers
         [HttpPost]
         public ActionResult List(DataSourceRequest command, DepositTransactionListModel model)
         {
-            var customers = _depositTransactionBiz.GetAllDepositTransactions(model.customerId, model.DateFrom, model.DateTo, command.Page, command.PageSize);
+            var customers = _depositTransactionBiz.GetAllDepositTransactions(model.customerId, model.UserName, model.DateFrom, model.DateTo, command.Page, command.PageSize);
             var gridModel = new DataSourceResult
             {
                 Data = customers.Select(x => new {
@@ -88,11 +92,11 @@ namespace Tmc.Admin.Controllers
         }
 
         [AdminAuthorize]
-        public ActionResult ExportExcelAll()
+        public ActionResult ExportExcelAll(DepositTransactionListModel model)
         {
             try
             {
-                var transactions = _depositTransactionBiz.GetAllDepositTransactions(null, null, null);
+                var transactions = _depositTransactionBiz.GetAllDepositTransactions(null,null, null, null);
 
                 byte[] bytes = null;
                 using (var stream = new MemoryStream())
@@ -101,6 +105,29 @@ namespace Tmc.Admin.Controllers
                     bytes = stream.ToArray();
                 }
                 return File(bytes, "text/xls", "transactions.xlsx");
+            }
+            catch (Exception exc)
+            {
+                return RedirectToAction("List");
+            }
+        }
+
+        [AdminAuthorize]
+        public ActionResult ExportExcel(DepositTransactionListModel model)
+        {
+            try
+            {
+                var transactions = _depositTransactionBiz.GetAllDepositTransactions(model.customerId,model.UserName, model.DateFrom,model.DateTo);
+
+                byte[] bytes = null;
+                using (var stream = new MemoryStream())
+                {
+                    _exportService.ExportDepositTransactionsToXlsx(stream, transactions);
+                    bytes = stream.ToArray();
+                }
+                Session["Transaction_Export_Data"] = bytes;
+                return new JsonResult() { Data = "Transaction_Export_Data" };
+                //return File(bytes, "text/xls", "transactions.xlsx");
             }
             catch (Exception exc)
             {

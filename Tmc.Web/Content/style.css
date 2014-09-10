@@ -1,2 +1,88 @@
-﻿body {
+﻿html, body, form, div, span, label{
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+    vertical-align:baseline;
 }
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:13px;
+    background:none repeat scroll 0 0 #efece6;
+    width: 100%;
+}
+label, span
+{
+    color:#FF3300;
+}
+.field-validation-error span
+{
+    color: red;
+}
+.page{
+    width: 100%;
+    overflow: hidden;
+}
+
+.page-body{
+    width: 1025px;
+    margin: 0 auto;
+    background: #ccc;
+    height:100vh;
+}
+
+.header
+{
+    background: darkgray url("../images/banner.jpg") no-repeat 0 0;
+    width: 1025px;
+    height:160px;
+}
+.content
+{
+}
+.top-nav
+{
+    padding:10px 5px 10px 5px;
+}
+.main-content
+{
+    padding:0 5px;
+    width: 1015px;
+}
+.login-block
+{
+    margin:20px auto 0px auto;
+    padding:10px;
+    width:400px;
+    border:solid 1px darkgray;
+}
+
+.footer
+{
+    padding:0 5px;
+    width: 1015px;
+}
+
+
+a{
+    text-decoration: none;
+    color: white;
+    outline:0 none;
+}
+a:hover{
+    text-decoration: none;
+    color: #ffffff;
+}
+a, img,  button, a img {
+    outline:0 none;
+    border:0 none;
+}
+img{
+    vertical-align: top;
+}
+input{
+   
+}
+

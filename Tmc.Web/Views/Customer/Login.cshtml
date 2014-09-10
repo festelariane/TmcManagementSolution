@@ -5,19 +5,14 @@
     ViewBag.Title = "Login";
 }
 
-<div class="page login-page">
-    <div class="page-title">
-        <h2>Welcom To GiaLuc</h2>
-    </div>
-    <div class="page-body">
-        @using (Html.BeginForm())
-        {
-        <div class="message-error">
-            @Html.ValidationSummary(true, "Cannot login")
-        </div>
+<div class="main-content">
+
+    @using (Html.BeginForm())
+    {
+
         <div class="login-block">
             <div class="inputs">
-                @Html.LabelFor(model=>model.UserName)
+                @Html.LabelFor(model => model.UserName)
                 @Html.TextBoxFor(m => m.UserName, new { @class = "username", autofocus = "autofocus" })
                 @Html.ValidationMessageFor(m => m.UserName)
             </div>
@@ -26,11 +21,16 @@
                 @Html.PasswordFor(m => m.Password, new { @class = "password" })
                 @Html.ValidationMessageFor(m => m.Password)
             </div>
-         
+            <label class="col1">&nbsp;</label>
+            @Html.CheckBoxFor(m => m.RememberMe)
+            @Html.LabelFor(m => m.RememberMe)
             <div class="buttons">
                 <input class="login-button" type="submit" value="Login" />
             </div>
+
+            <div class="message-error">
+                @Html.ValidationSummary(true, "Cannot login")
+            </div>
         </div>
-        }
-    </div>
+    }
 </div>
