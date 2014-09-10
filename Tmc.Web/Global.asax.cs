@@ -31,6 +31,7 @@ namespace Tmc.Web
 
             var validationProviderFactory = new TmcValidatorFactory();
             var validationProvider = new FluentValidationModelValidatorProvider(validationProviderFactory);
+            validationProvider.AddImplicitRequiredValidator = false;
             ModelValidatorProviders.Providers.Add(validationProvider);
         }
     }
