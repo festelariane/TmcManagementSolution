@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tmc.BLL.Contract.Customers;
+using Tmc.BLL.Contract.Security;
 using Tmc.Core;
 using Tmc.Core.Common;
 using Tmc.Core.Data;
@@ -17,13 +18,15 @@ namespace Tmc.BLL.Impl.Customers
         private readonly IRepository<Customer> _customerRepository;
         private readonly IRepository<CardType> _cardTypeRepository;
         private readonly IRepository<CustomerRole> _customerRoleRepository;
+        private readonly IEncryptionService _encryptionService;
 
         public CustomerBiz(IRepository<Customer> customerRepository, IRepository<CardType> cardTypeRepository,
-            IRepository<CustomerRole> customerRoleRepository)
+            IRepository<CustomerRole> customerRoleRepository, IEncryptionService encryptionService)
         {
             this._customerRepository = customerRepository;
             this._cardTypeRepository = cardTypeRepository;
             this._customerRoleRepository = customerRoleRepository;
+            this._encryptionService = encryptionService;
         }
         public IPagedList<Customer> GetAllCustomers(string userName, string fullName, int pageIndex = 0, int pageSize = 2147483647)
         {
@@ -69,6 +72,15 @@ namespace Tmc.BLL.Impl.Customers
             _customerRepository.Update(customer);
         }
 
+        private string BuildCustomerCode()
+        {
+            lock(typeof(CustomerBiz))
+            {
+                var latestId = _customerRepository.Table.LongCount();
+                return (latestId + 1).ToString("D8");
+            }
+            
+        }
         public Customer InsertCustomer(Customer customer)
         {
             if (customer == null)
@@ -89,6 +101,13 @@ namespace Tmc.BLL.Impl.Customers
             customer.UpdatedOnUtc = customer.CreatedOnUtc;
             customer.LastActivityDateUtc = customer.CreatedOnUtc;
             customer.LastLoginDateUtc = null;
+            customer.CustomerCode = BuildCustomerCode();
+
+            var saltKey = _encryptionService.CreateSaltKey(5);
+
+            customer.Password = _encryptionService.CreatePasswordHash(customer.CustomerCode,saltKey);
+            customer.PasswordSalt = saltKey;
+
             _customerRepository.Insert(customer);
             return customer;
         }

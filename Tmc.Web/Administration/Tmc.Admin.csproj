@@ -127,10 +127,14 @@
     <Compile Include="Models\CardTypes\CardTypeListModel.cs" />
     <Compile Include="Models\CardTypes\CardTypeModel.cs" />
     <Compile Include="Models\Customers\CustomerListModel.cs" />
+    <Compile Include="Models\Customers\ApplyCustomerRoleModel.cs" />
     <Compile Include="Models\Customers\CustomerModel.cs" />
+    <Compile Include="Models\Transactions\WithdrawTransactionListModel .cs" />
+    <Compile Include="Models\Transactions\WithdrawTransactionModel.cs" />
     <Compile Include="Models\Transactions\DepositTransactionModel.cs" />
     <Compile Include="Models\Transactions\DepositTransactionListModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Validators\WithdrawTransactionValidator.cs" />
     <Compile Include="Validators\DepositTransactionValidator.cs" />
     <Compile Include="Validators\CustomerValidator.cs" />
     <Compile Include="Validators\CardTypeValidator.cs" />
@@ -169,6 +173,9 @@
     <Content Include="Views\Transaction\List.cshtml" />
     <Content Include="Views\Transaction\_TransactionListing.cshtml" />
     <Content Include="Views\CustomerRole\List.cshtml" />
+    <Content Include="Views\Transaction\_WithdrawTransactionListing.cshtml" />
+    <Content Include="Views\Transaction\WithdrawList.cshtml" />
+    <Content Include="Views\CustomerRole\_ApplyCustomerRoles.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

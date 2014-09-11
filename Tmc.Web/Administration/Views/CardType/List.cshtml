@@ -58,8 +58,8 @@
                                         ExchangeRate: { editable: true, type: "number" },
                                         Threshold: { editable: true, type: "number"},
                                         DisplayOrder: { editable: true, type: "number"},
-                                        Level: { editable: true, type: "number"}
-
+                                        Level: { editable: true, type: "number"},
+                                        Prefix: { editable: true, type: "string" }
                                     }
                                 }
                             },
@@ -81,6 +81,7 @@
                         toolbar: ["create"],
                         columns: [
                             { field: "Name", title: "Name" },
+                            { field: "Prefix", title: "Prefix" },
                             { field: "ExchangeRate", title: "ExchangeRate" },
                             { field: "Threshold", title: "Threshold"},
                             { field: "Level", title: "Level"},

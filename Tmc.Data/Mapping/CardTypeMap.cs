@@ -17,6 +17,7 @@ namespace Tmc.Data.Mapping
             this.Property(ct => ct.Name).IsRequired().HasMaxLength(255);
             this.Property(ct => ct.ExchangeRate).IsRequired();
             this.Property(ct => ct.Threshold).IsRequired();
+            this.Property(ct => ct.Prefix).HasMaxLength(5);
         }
     }
 }

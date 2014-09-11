@@ -1,0 +1,15 @@
+﻿@model IList<ApplyCustomerRoleModel>
+@using Tmc.Admin.Models.Customers;
+
+@if(Model != null && Model.Count > 0)
+{
+    <ul>
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <li>
+                @Html.CheckBoxFor(m => m[i].Selected)
+                <span>@Model[i].RoleName</span>
+            </li>
+        }
+    </ul>
+}

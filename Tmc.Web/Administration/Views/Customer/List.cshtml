@@ -18,21 +18,35 @@
 </div>
 <div id="customer-deposit-dialog" title="Deposit" style="display:none">
     <input id="deposit-amount" type="number" value="0" min="0" max="100000000" step="1" />
-</div>	
+</div>
+<div id="customer-withdraw-dialog" title="Withdraw" style="display:none">
+    <label for="withdraw-points">Points</label>
+    <input id="withdraw-points" type="number" value="0" min="0" max="100000000" step="1" />
+    <br />
+    <label for="withdraw-reason">Reason</label>
+    <textarea id="withdraw-reason" rows="5" style="width:200px;"></textarea>
+</div>
 
 <script type="text/x-kendo-template" id="deposit-row-template">
     <a id="btn-customer-deposit" href="javascript:void(0)" onclick="onCustomerDeposit(#=Id#)">Deposit</a>
+    <a id="btn-customer-withdraw" href="javascript:void(0)" onclick="onCustomerWithdraw(#=Id#)">Withdraw</a>
     <a id="btn-customer-deposit" href="@Url.Action("List", "Transaction")/?customerId=#=Id#">Transaction Listing</a>
+    <a id="btn-customer-deposit" href="@Url.Action("WithdrawList", "Transaction")/?customerId=#=Id#">Withdraw Transaction Listing</a>
 </script>
 <script>
     function resetDepositForm()
     {
         $("#deposit-amount").val(0);
     }
+    function resetWithdrawForm()
+    {
+        $("#withdraw-points").val(0);
+        $("#withdraw-reason").val("");
+    }
     $(document).ready(function () {
         $("#customer-deposit-dialog").dialog({
             autoOpen: false, width: 300, height: 200, resizable: false, modal: true,
-            
+
             close: function()
             {
                 resetDepositForm();
@@ -59,7 +73,6 @@
                         {
                             dataSource.read();
                         }
-                            
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
                         alert('Error...Please check...');
@@ -69,10 +82,54 @@
                 },
                 "Cancel": function () {
                     $(this).dialog("close");
-                }                
+                }
             }
         });
         $("#deposit-amount").kendoNumericTextBox();
+
+
+        $("#customer-withdraw-dialog").dialog({
+            autoOpen: false, width: 300, height: 400, resizable: false, modal: true,
+
+            close: function()
+            {
+                resetWithdrawForm();
+            },
+            buttons:
+            {
+                "Withdraw": function()
+                {
+                    var parentDlg = $(this);
+
+                    var customerId = $(this).data('customer-id');
+                    var points = parseInt($("#withdraw-points").val());
+                    var reason = $("#withdraw-reason").val();
+                    $.ajax({
+                        cache: false,
+                        type: "POST",
+                        url: "@Url.Action("CustomerWithdraw","Transaction")",
+                        data: JSON.stringify({"customerId":customerId, "points":points, "reason":reason}),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data)
+                    {
+                        parentDlg.dialog("close");
+                        if(dataSource != null)
+                        {
+                            dataSource.read();
+                        }
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Error...Please check...');
+                        //parentDlg.dialog("close");
+                    }
+                });
+    },
+                "Cancel": function () {
+                    $(this).dialog("close");
+                }
+    }
+    });
 
             dataSource = new kendo.data.DataSource({
                 transport: {
@@ -114,6 +171,7 @@
                             Id: { editable: false, type: "string",nullable: true },
                             CardTypeId: { editable: true },
                             CardType:{},
+                            CustomerCode:{ editable: false, type:"string"},
                             UserName: { editable: true},
                             FullName: { editable: true},
                             Points: { editable: true, type: "number", validation: { min: 0}},
@@ -133,7 +191,6 @@
         $("#grid-customers").kendoGrid({
             dataSource: dataSource,
             pageable: true,
-            height: 450,
             toolbar: ["create",
                 {name: "ExportToExcel",
                 text: "Export All Customers To Excel",
@@ -144,6 +201,9 @@
                     title:"Action",
                     template: kendo.template($("#deposit-row-template").html())
                     //template: '<a id="btn-customer-deposit" href="javascript:void(0)" onclick="onCustomerDeposit(#=Id#)">Deposit</a>'
+                },
+                { title: "CustomerCode",
+                template: '#=CardType.Prefix##=CustomerCode#'
                 },
                 { field: "UserName", title: "UserName" },
                 { field: "FullName", title: "FullName" },
@@ -228,5 +288,9 @@
     function onCustomerDeposit(customerId)
     {
         $("#customer-deposit-dialog").data("customer-id",customerId).dialog("open");
+    }
+    function onCustomerWithdraw(customerId)
+    {
+        $("#customer-withdraw-dialog").data("customer-id",customerId).dialog("open");
     }
 </script>

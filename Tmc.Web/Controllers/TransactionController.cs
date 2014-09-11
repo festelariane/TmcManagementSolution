@@ -17,10 +17,10 @@ namespace Tmc.Web.Controllers
 {
     public class TransactionController : BaseFrontEndController
     {
-        private readonly IDepositTransactionBiz _depositTransactionBiz;
+        private readonly ITransactionBiz _depositTransactionBiz;
         private readonly IExportService _exportService;
         private readonly IWorkContext _workContext;
-        public TransactionController(IDepositTransactionBiz depositTransactionBiz, IExportService exportService, IWorkContext workContext)
+        public TransactionController(ITransactionBiz depositTransactionBiz, IExportService exportService, IWorkContext workContext)
         {
             this._depositTransactionBiz = depositTransactionBiz;
             this._exportService = exportService;

@@ -64,7 +64,7 @@ namespace Tmc.Web.Framework
 
             builder.RegisterType<CustomerBiz>().As<ICustomerBiz>().InstancePerRequest();
             builder.RegisterType<CardTypeBiz>().As<ICardTypeBiz>().InstancePerRequest();
-            builder.RegisterType<DepositTransactionBiz>().As<IDepositTransactionBiz>().InstancePerRequest();
+            builder.RegisterType<TransactionBiz>().As<ITransactionBiz>().InstancePerRequest();
             builder.RegisterType<EncryptionService>().As<IEncryptionService>().InstancePerRequest();
             builder.RegisterType<CustomerRegistrationService>().As<ICustomerRegistrationService>().InstancePerRequest();
             builder.RegisterType<FormAuthenticationBiz>().As<IAuthenticationBiz>().InstancePerRequest();

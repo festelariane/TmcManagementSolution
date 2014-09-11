@@ -16,5 +16,6 @@ namespace Tmc.Admin.Models.CardTypes
         public decimal Threshold { get; set; }
         public int DisplayOrder { get; set; }
         public int Level { get; set; }
+        public string Prefix { get; set; }
     }
 }

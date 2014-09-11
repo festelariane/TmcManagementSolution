@@ -1,0 +1,142 @@
+﻿@model WithdrawTransactionListModel
+@using Tmc.Admin.Models.Transactions;
+@{
+    ViewBag.Title = "_WithdrawTransactionListing";
+}
+
+<div id="grid-withdraw-transactions"></div>
+
+<script type="text/x-kendo-template" id="transaction-listing-toolbar-template">
+    <div class="toolbar">
+        @if (Model.customerId == null)
+        {
+            <label for="withdraw-transaction-username">Username:</label>
+            <input type="text" id="withdraw-transaction-username" style="width: 150px" />
+        }
+
+        <label for="withdraw-transaction-date-from">From:</label>
+        <input type="text" id="withdraw-transaction-date-from" style="width: 150px" />
+        <label for="withdraw-transaction-date-to">To:</label>
+        <input type="text" id="withdraw-transaction-date-to" style="width: 150px" />
+
+        <a href="javascript:void(0)" class="k-button k-button-icontext" onclick="onSearchWithdrawTransaction()">Search</a>
+        <a href="@Url.Action("ExportWithdrawToExcelAll", "Transaction")" target="_blank" class="k-button k-button-icontext">Export All Transaction to Excel</a>
+     
+        <a href="javascript:void(0)" class="k-button k-button-icontext" onclick="onExportToExcel()">Export to Excel</a>
+    </div>
+</script>
+
+<script>
+    function onExportToExcel()
+    {
+        $.ajax({
+            cache: false,
+            type: "POST",
+            url: "@Url.Action("ExportWithdrawToExcel", "Transaction")",
+            data: JSON.stringify(additionalWithdrawData()),
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function(data)
+            {
+                var downloadUrl = "@Url.Action("DownloadExcel", "Download")/?key="+data;
+                window.open(downloadUrl, "_blank");
+                            
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert('Error...Please check...');
+            }
+        });
+    }
+    function onSearchWithdrawTransaction()
+    {
+        var grid = $('#grid-withdraw-transactions').data('kendoGrid');
+        grid.dataSource.page(1); //new search. Set page size to 1
+        grid.dataSource.read();
+    }
+    function additionalWithdrawData() {
+        var dateFrom = null;
+        if ($("#withdraw-transaction-date-from").data("kendoDatePicker") != null)
+        {
+            dateFrom = $("#withdraw-transaction-date-from").data("kendoDatePicker").value();
+        }
+        var dateTo = null;
+        if ($("#withdraw-transaction-date-to").data("kendoDatePicker") != null) {
+            dateTo = $("#withdraw-transaction-date-to").data("kendoDatePicker").value();
+        }
+        var userName = $("#withdraw-transaction-username").val();
+        var customerId = @if(Model.customerId == null){<text>""</text>} else{<text>@Model.customerId</text>};
+   
+        return {
+            customerId: customerId,
+            DateFrom: dateFrom == null ? "" : dateFrom.toString(),
+            DateTo: dateTo == null ? "" : dateTo.toString(),
+            UserName:userName
+        };
+
+    }
+    $(document).ready(function () {
+        var transactionDataSource = new kendo.data.DataSource(
+            {
+                transport: {
+                    read:  {
+                        url: "@Html.Raw(Url.Action("WithdrawList", "Transaction"))",
+                        type: "POST",
+                        dataType: "json",
+                        data: additionalWithdrawData
+                }
+                },
+                batch: true,
+                pageSize: 20,
+                schema: {
+                    data: "Data",
+                    total: "Total",
+                    errors: "Errors",
+                    model: {
+                        id: "Id",
+                        fields: {
+                            Id: { editable: false, type: "string", nullable: true },
+                            CustomerId: { editable: false },
+                            CustomerName: {},
+                            CreatedOnUtc: { editable: false, type: 'date', format: 'dd/MM/yyyy' },
+                            Points: { editable: false, type: 'number'},
+                            Reason: { editable: false, type: 'string' }
+                        }
+                    }
+                }
+            });
+
+        $("#grid-withdraw-transactions").kendoGrid({
+            dataSource: transactionDataSource,
+            pageable: true,
+            toolbar: kendo.template($("#transaction-listing-toolbar-template").html()),
+            columns: [
+                {
+                    field: "CustomerName",
+                    title: "UserName",
+                },
+                {
+                    field: "Points",
+                    title: "Points"
+                },
+                {
+                    field: "Reason",
+                    title: "Reason"
+                },
+                {
+                    field: "CreatedOnUtc",
+                    title: "CreatedOnUtc",
+                    format: "{0:dd-MM-yyyy}"
+                },
+            ]
+        });
+      
+        $("#withdraw-transaction-date-from").kendoDatePicker({
+            animation: false,
+            format: "MM/dd/yyyy"
+        });
+        $("#withdraw-transaction-date-to").kendoDatePicker({
+            animation: false,
+            format: "MM/dd/yyyy"
+        });
+    });
+</script>

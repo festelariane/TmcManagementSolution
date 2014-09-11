@@ -16,6 +16,7 @@ namespace Tmc.Admin.Models.Customers
         {
             CardType = new CardTypeModel();
         }
+        public string CustomerCode { get; set; }
         public int? CardTypeId { get; set; }
         public CardTypeModel CardType { get; set; }
         public string FullName { get; set; }

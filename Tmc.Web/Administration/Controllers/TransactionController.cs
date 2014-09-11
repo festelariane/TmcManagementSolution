@@ -17,11 +17,11 @@ namespace Tmc.Admin.Controllers
 {
     public class TransactionController : BaseAdminController
     {
-        private readonly IDepositTransactionBiz _depositTransactionBiz;
+        private readonly ITransactionBiz _transactionBiz;
         private readonly IExportService _exportService;
-        public TransactionController(IDepositTransactionBiz depositTransactionBiz, IExportService exportService)
+        public TransactionController(ITransactionBiz transactionBiz, IExportService exportService)
         {
-            this._depositTransactionBiz = depositTransactionBiz;
+            this._transactionBiz = transactionBiz;
             this._exportService = exportService;
         }
         //
@@ -40,7 +40,7 @@ namespace Tmc.Admin.Controllers
         [HttpPost]
         public ActionResult List(DataSourceRequest command, DepositTransactionListModel model)
         {
-            var customers = _depositTransactionBiz.GetAllDepositTransactions(model.customerId, model.UserName, model.DateFrom, model.DateTo, command.Page, command.PageSize);
+            var customers = _transactionBiz.GetAllDepositTransactions(model.customerId, model.UserName, model.DateFrom, model.DateTo, command.Page, command.PageSize);
             var gridModel = new DataSourceResult
             {
                 Data = customers.Select(x => new {
@@ -81,7 +81,7 @@ namespace Tmc.Admin.Controllers
             bool bOk = false;
             try
             {
-                bOk = _depositTransactionBiz.Deposit(customerId, amount);
+                bOk = _transactionBiz.Deposit(customerId, amount);
                 return Json(new TmcAjaxResponse() { Success = bOk });
             }
             catch(Exception ex)
@@ -96,7 +96,7 @@ namespace Tmc.Admin.Controllers
         {
             try
             {
-                var transactions = _depositTransactionBiz.GetAllDepositTransactions(null,null, null, null);
+                var transactions = _transactionBiz.GetAllDepositTransactions(null,null, null, null);
 
                 byte[] bytes = null;
                 using (var stream = new MemoryStream())
@@ -117,7 +117,7 @@ namespace Tmc.Admin.Controllers
         {
             try
             {
-                var transactions = _depositTransactionBiz.GetAllDepositTransactions(model.customerId,model.UserName, model.DateFrom,model.DateTo);
+                var transactions = _transactionBiz.GetAllDepositTransactions(model.customerId,model.UserName, model.DateFrom,model.DateTo);
 
                 byte[] bytes = null;
                 using (var stream = new MemoryStream())
@@ -127,11 +127,111 @@ namespace Tmc.Admin.Controllers
                 }
                 Session["Transaction_Export_Data"] = bytes;
                 return new JsonResult() { Data = "Transaction_Export_Data" };
-                //return File(bytes, "text/xls", "transactions.xlsx");
             }
             catch (Exception exc)
             {
-                return RedirectToAction("List");
+                return new NullJsonResult();
+            }
+        }
+
+
+        public ActionResult WithdrawList(int? customerId)
+        {
+            var model = new WithdrawTransactionListModel();
+            if (customerId == null || customerId.Value <= 0)
+            {
+                customerId = null;
+            }
+            model.customerId = customerId;
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult WithdrawList(DataSourceRequest command, WithdrawTransactionListModel model)
+        {
+            var customers = _transactionBiz.GetAllWithdrawTransactions(model.customerId, model.UserName, model.DateFrom, model.DateTo, command.Page, command.PageSize);
+            var gridModel = new DataSourceResult
+            {
+                Data = customers.Select(x => new
+                {
+                    CustomerId = x.CustomerId,
+                    CustomerName = x.Customer.UserName,
+                    CreatedOnUtc = x.CreatedOnUtc,
+                    Points = x.Points,
+                    Reason = x.Reason
+                }),
+                Total = customers.TotalCount
+            };
+            return Json(gridModel);
+        }
+
+        [HttpPost]
+        public ActionResult Create([Bind(Exclude = "Id")] WithdrawTransactionModel model)
+        {
+            return new NullJsonResult();
+        }
+
+        public ActionResult Withdraw()
+        {
+            return null;
+        }
+
+        [HttpPost]
+        public ActionResult CustomerWithdraw(int customerId, decimal points, string reason)
+        {
+            bool bOk = false;
+            try
+            {
+                bOk = _transactionBiz.Withdraw(customerId, points, reason);
+                return Json(new TmcAjaxResponse() { Success = bOk });
+            }
+            catch (Exception ex)
+            {
+                return Json(new TmcAjaxResponse() { Success = bOk, Errors = new List<string>() { ex.ToString() } });
+            }
+
+        }
+
+        [AdminAuthorize]
+        public ActionResult ExportWithdrawToExcelAll(WithdrawTransactionListModel model)
+        {
+            try
+            {
+                var transactions = _transactionBiz.GetAllWithdrawTransactions(null, null, null, null);
+
+                byte[] bytes = null;
+                using (var stream = new MemoryStream())
+                {
+                    _exportService.ExportWithdrawTransactionsToXlsx(stream, transactions);
+                    bytes = stream.ToArray();
+                }
+                return File(bytes, "text/xls", "withdraw_transactions.xlsx");
+            }
+            catch (Exception exc)
+            {
+                return RedirectToAction("WithdrawList");
+            }
+        }
+
+        [AdminAuthorize]
+        public ActionResult ExportWithdrawToExcel(WithdrawTransactionListModel model)
+        {
+            try
+            {
+                var transactions = _transactionBiz.GetAllWithdrawTransactions(model.customerId, model.UserName, model.DateFrom, model.DateTo);
+
+                byte[] bytes = null;
+                using (var stream = new MemoryStream())
+                {
+                    _exportService.ExportWithdrawTransactionsToXlsx(stream, transactions);
+                    bytes = stream.ToArray();
+                }
+                Session["WithdrawTransaction_Export_Data"] = bytes;
+                return new JsonResult() { Data = "WithdrawTransaction_Export_Data" };
+            }
+            catch (Exception exc)
+            {
+                return new NullJsonResult();
             }
         }
 	}

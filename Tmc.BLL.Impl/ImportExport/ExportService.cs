@@ -130,7 +130,51 @@ namespace Tmc.BLL.Impl.ImportExport
                 xlPackage.Save();
             }
         }
-        
+        public void ExportWithdrawTransactionsToXlsx(Stream stream, IList<WithdrawTransaction> transactions)
+        {
+            if (stream == null)
+                throw new ArgumentNullException("stream");
+            using (var xlPackage = new ExcelPackage(stream))
+            {
+                var worksheet = xlPackage.Workbook.Worksheets.Add("WithdrawTransactions");
+                //Create Headers and format them
+                var properties = new string[]
+                    {
+                        "Customer Name",
+                        "Points",
+                        "Reason",
+                        "Created On"
+                    };
+                for (int i = 0; i < properties.Length; i++)
+                {
+                    worksheet.Cells[1, i + 1].Value = properties[i];
+                    worksheet.Cells[1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[1, i + 1].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(184, 204, 228));
+                    worksheet.Cells[1, i + 1].Style.Font.Bold = true;
+                }
+
+                int row = 2;
+                foreach (var transaction in transactions)
+                {
+                    int col = 1;
+
+                    worksheet.Cells[row, col].Value = transaction.Customer != null ? transaction.Customer.UserName : "";
+                    col++;
+
+                    worksheet.Cells[row, col].Value = transaction.Points;
+                    col++;
+
+                    worksheet.Cells[row, col].Value = transaction.Reason;
+                    col++;
+
+                    worksheet.Cells[row, col].Value = GetDateString(transaction.CreatedOnUtc);
+
+                    row++;
+                }
+                // save the new spreadsheet
+                xlPackage.Save();
+            }
+        }
         private string GetDateString(DateTime date)
         {
             return date.ToString("dd/MM/yyyy HH:mm:ss");

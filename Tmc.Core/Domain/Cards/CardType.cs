@@ -14,5 +14,6 @@ namespace Tmc.Core.Domain.Cards
         public int DisplayOrder { get; set; }
 
         public int Level { get; set; }
+        public string Prefix { get; set; }
     }
 }
