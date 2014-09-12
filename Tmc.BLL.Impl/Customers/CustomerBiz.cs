@@ -28,16 +28,16 @@ namespace Tmc.BLL.Impl.Customers
             this._customerRoleRepository = customerRoleRepository;
             this._encryptionService = encryptionService;
         }
-        public IPagedList<Customer> GetAllCustomers(string userName, string fullName, int pageIndex = 0, int pageSize = 2147483647)
+        public IPagedList<Customer> GetAllCustomers(string userName, string userCode, int pageIndex = 0, int pageSize = 2147483647)
         {
             var query = _customerRepository.Table;
             if(!string.IsNullOrEmpty(userName))
             {
                 query = query.Where(c => c.UserName.Contains(userName.Trim()));
             }
-            if (!string.IsNullOrWhiteSpace(fullName))
+            if (!string.IsNullOrWhiteSpace(userCode))
             {
-                query = query.Where(c => c.UserName.Contains(fullName.Trim()));
+                query = query.Where(c => c.CustomerCode.Contains(userCode.Trim()));
             }
             query = query.OrderBy(c => c.UserName);
             return new PagedList<Customer>(query, pageIndex, pageSize);
@@ -214,6 +214,36 @@ namespace Tmc.BLL.Impl.Customers
 
         }
 
+        public bool AssignUserToRoles(int customerId, IList<int> roleIds)
+        {
+            var customer = GetCustomerById(customerId);
+            if(customer == null)
+            {
+                throw new ArgumentNullException("customer");
+            }
+            if(roleIds == null)
+            {
+                return false;
+            }
+            var removedRoles = customer.CustomerRoles.Where(r => !roleIds.Contains(r.Id)).ToList();
+            foreach(var role in removedRoles)
+            {
+                customer.CustomerRoles.Remove(role);
+            }
+            var currentRoleIds = customer.CustomerRoles.Select(r => r.Id).ToList();
+            var newRoleIds = roleIds.Except(currentRoleIds).ToList();
+
+            if (newRoleIds.Count > 0)
+            {
+                var roles = _customerRoleRepository.Table.Where(cr => newRoleIds.Contains(cr.Id));
+                foreach (var role in roles)
+                {
+                    customer.CustomerRoles.Add(role);
+                } 
+            }
+            UpdateCustomer(customer);
+            return true;
+        }
         #endregion
     }
 }

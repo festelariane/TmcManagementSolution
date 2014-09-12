@@ -44,7 +44,7 @@ namespace Tmc.Admin.Controllers
             };
             return Json(gridModel);
         }
-
+        [AdminAuthorize]
         public ActionResult ApplyCustomerRoles(int customerId)
         {
             if(customerId <= 0)
@@ -61,20 +61,34 @@ namespace Tmc.Admin.Controllers
 
             return PartialView("_ApplyCustomerRoles", model);
         }
-        private IList<ApplyCustomerRoleModel> PrepareApplyCustomerRoleModel(IList<CustomerRole> allRoles, Customer customer)
+        [AdminAuthorize]
+        [HttpPost]
+        public ActionResult ApplyCustomerRoles(ApplyCustomerRoleModel model)
         {
-            var retVal = new List<ApplyCustomerRoleModel>();
+            if (model.CustomerId <= 0)
+            {
+                return Content("");
+            }
+            bool bOk = _customerBiz.AssignUserToRoles(model.CustomerId, model.AllRoles.Where(cr => cr.Selected).Select(m => m.Id).ToList());
+            return Json(new { Success = bOk });
+        }
+        private ApplyCustomerRoleModel PrepareApplyCustomerRoleModel(IList<CustomerRole> allRoles, Customer customer)
+        {
+            var retVal = new ApplyCustomerRoleModel();
+            retVal.CustomerId = customer.Id;
+            retVal.CustomerCode = customer.CustomerCode;
+            retVal.CustomerName = customer.UserName;
+
             var customerRoles = customer.CustomerRoles.ToList();
             if (allRoles != null)
             {
                 foreach (var role in allRoles)
                 {
-                    var model = new ApplyCustomerRoleModel();
-                    model.CustomerId = customer.Id;
-                    model.CustomerCode = customer.CustomerCode;
-                    model.CustomerName = customer.UserName;
-                    model.RoleName = role.Name;
+                    var model = new CustomerRoleModel();
                     
+                    model.Name = role.Name;
+                    model.Id = role.Id;
+
                     if (customerRoles.Contains(role))
                     {
                         model.Selected = true;
@@ -83,7 +97,7 @@ namespace Tmc.Admin.Controllers
                     {
                         model.Selected = false;
                     }
-                    retVal.Add(model);
+                    retVal.AllRoles.Add(model);
                 }
             }
             return retVal;

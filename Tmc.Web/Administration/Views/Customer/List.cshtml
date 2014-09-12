@@ -26,14 +26,37 @@
     <label for="withdraw-reason">Reason</label>
     <textarea id="withdraw-reason" rows="5" style="width:200px;"></textarea>
 </div>
+<div id="customer-roles-dialog" title="Assign Roles" style="display:none">
+
+</div>
 
 <script type="text/x-kendo-template" id="deposit-row-template">
     <a id="btn-customer-deposit" href="javascript:void(0)" onclick="onCustomerDeposit(#=Id#)">Deposit</a>
     <a id="btn-customer-withdraw" href="javascript:void(0)" onclick="onCustomerWithdraw(#=Id#)">Withdraw</a>
     <a id="btn-customer-deposit" href="@Url.Action("List", "Transaction")/?customerId=#=Id#">Transaction Listing</a>
     <a id="btn-customer-deposit" href="@Url.Action("WithdrawList", "Transaction")/?customerId=#=Id#">Withdraw Transaction Listing</a>
+    <a id="btn-customer-withdraw" href="javascript:void(0)" onclick="onAssigningRole(#=Id#)">Assign Roles</a>
 </script>
+
+<script type="text/x-kendo-template" id="customer-searchcriteria-toolbar-template">
+    <label for="customer-searchcriteria-username">User Name:</label>
+    <span class="k-header">
+        <input type="text" id="customer-searchcriteria-username" style="width: 150px" class="k-textbox" />
+    </span>
+
+    <label for="customer-searchcriteria-usercode">Code:</label>
+    <span class="k-header">
+        <input type="text" id="customer-searchcriteria-usercode" style="width: 150px" class="k-textbox" />
+    </span>
+    <a href="javascript:void(0)" class="k-button k-button-icontext" onclick="onSearchCustomer()">Search</a>
+</script>
+
 <script>
+    function resetSearchCriteriaForm()
+    {
+        $("#customer-searchcriteria-username").val("");
+        $("#customer-searchcriteria-usercode").val("");
+    }
     function resetDepositForm()
     {
         $("#deposit-amount").val(0);
@@ -43,6 +66,25 @@
         $("#withdraw-points").val(0);
         $("#withdraw-reason").val("");
     }
+
+        
+    function onSearchCustomer()
+    {
+        var grid = $('#grid-customers').data('kendoGrid');
+        grid.dataSource.page(1); //new search. Set page size to 1
+        grid.dataSource.read();
+    }
+
+
+    function getSearchCriteria() {
+        var criteria = {
+                            SearchUserName: $("#customer-searchcriteria-username").val(),
+                            SearchUserCode: $("#customer-searchcriteria-usercode").val()
+        };
+        return criteria;
+
+    }
+
     $(document).ready(function () {
         $("#customer-deposit-dialog").dialog({
             autoOpen: false, width: 300, height: 200, resizable: false, modal: true,
@@ -69,9 +111,9 @@
                     success: function(data)
                     {
                         parentDlg.dialog("close");
-                        if(dataSource != null)
+                        if(customerDataSource != null)
                         {
-                            dataSource.read();
+                            customerDataSource.read();
                         }
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
@@ -114,9 +156,9 @@
                     success: function(data)
                     {
                         parentDlg.dialog("close");
-                        if(dataSource != null)
+                        if(customerDataSource != null)
                         {
-                            dataSource.read();
+                            customerDataSource.read();
                         }
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
@@ -129,14 +171,63 @@
                     $(this).dialog("close");
                 }
     }
+        });
+
+
+        $("#customer-roles-dialog").dialog({
+            autoOpen: false, resizable: false, modal: true,
+            open: function(evt,ui){
+                $(this).html("");
+                var customerId = $(this).data('customer-id');
+                $(this).load("@Url.Action("ApplyCustomerRoles", "CustomerRole")/?customerId=" + customerId, function(){
+                })
+            },
+            close: function()
+            {
+            },
+            buttons:
+            {
+                "Assign Roles": function()
+                {
+                    var parentDlg = $(this);
+
+                    var customerId = $(this).data('customer-id');
+                    var points = parseInt($("#withdraw-points").val());
+                    var reason = $("#withdraw-reason").val();
+                    $.ajax({
+                        cache: false,
+                        type: "POST",
+                        url: "@Url.Action("ApplyCustomerRoles", "CustomerRole")",
+                        data: $("#form-apply-customer-role").serialize(),
+                    //contentType: 'application/json',
+                    //dataType: 'json',
+                    success: function(data)
+                    {
+                        parentDlg.dialog("close");
+                        if(customerDataSource != null)
+                        {
+                            customerDataSource.read();
+                        }
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert(xhr);
+                        alert('Error...Please check...');
+                    }
+                });
+    },
+                "Cancel": function () {
+                    $(this).dialog("close");
+                }
+    }
     });
 
-            dataSource = new kendo.data.DataSource({
+            var customerDataSource = new kendo.data.DataSource({
                 transport: {
                     read:  {
                         url: "@Html.Raw(Url.Action("List", "Customer"))",
                         type: "POST",
-                        dataType: "json"
+                        dataType: "json",
+                        cache: false
                     },
                     update: {
                         url:"@Html.Raw(Url.Action("Edit", "Customer"))",
@@ -154,7 +245,11 @@
                         type: "POST"
                     },
                     parameterMap: function(options, operation) {
-                        if (operation !== "read" && options.models) {
+                        if(operation=="read")
+                        {
+                            return getSearchCriteria();
+                        }
+                        if (options.models) {
                             return options.models[0];// {model: kendo.stringify(options.models[0])};
                         }
                     }
@@ -189,12 +284,22 @@
             });
 
         $("#grid-customers").kendoGrid({
-            dataSource: dataSource,
+            dataSource: customerDataSource,
             pageable: true,
-            toolbar: ["create",
-                {name: "ExportToExcel",
-                text: "Export All Customers To Excel",
-                onclick: function(e){alert('Export To Excel'); return false;}}
+            toolbar: [
+                {
+                    template:kendo.template($("#customer-searchcriteria-toolbar-template").html())
+                },
+                "create",
+                {
+                    name: "ExportToExcel",
+                    text: "Export All Customers To Excel"
+                },
+                
+                {
+                    name:"ResetSearchForm",
+                    text:"Reset"
+                }
             ],
             columns: [
                 {
@@ -238,6 +343,7 @@
         });
 
         $("#grid-customers .k-grid-ExportToExcel").attr("href","@Url.Action("ExportExcelAll", "Customer")").attr("target","_blank");
+        $("#grid-customers .k-grid-ResetSearchForm").click(function(){resetSearchCriteriaForm();});
     });
 
 
@@ -292,5 +398,9 @@
     function onCustomerWithdraw(customerId)
     {
         $("#customer-withdraw-dialog").data("customer-id",customerId).dialog("open");
+    }
+    function onAssigningRole(customerId)
+    {
+        $("#customer-roles-dialog").data("customer-id",customerId).dialog("open");
     }
 </script>

@@ -11,7 +11,7 @@ namespace Tmc.Admin.Models.Customers
     {
         [AllowHtml]
         public string SearchUserName { get; set; }
-        public string SearchFullName { get; set; }
+        public string SearchUserCode { get; set; }
 
     }
 }

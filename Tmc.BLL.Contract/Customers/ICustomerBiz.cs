@@ -10,7 +10,7 @@ namespace Tmc.BLL.Contract.Customers
 {
     public partial interface ICustomerBiz
     {
-        IPagedList<Customer> GetAllCustomers(string userName, string FullName, int pageIndex = 0, int pageSize = 2147483647);
+        IPagedList<Customer> GetAllCustomers(string userName, string userCode, int pageIndex = 0, int pageSize = 2147483647);
         Customer GetCustomerById(int customerId);
         void DeleteCustomer(Customer customer);
         void UpdateCustomer(Customer customer);
@@ -58,6 +58,7 @@ namespace Tmc.BLL.Contract.Customers
         /// <param name="customerRole">Customer role</param>
         void UpdateCustomerRole(CustomerRole customerRole);
 
+        bool AssignUserToRoles(int customerId, IList<int> roleIds);
         #endregion
     }
 }

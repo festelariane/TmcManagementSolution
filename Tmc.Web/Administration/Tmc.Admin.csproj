@@ -126,6 +126,7 @@
     <Compile Include="Infrastructure\AutoMapperStartupTask.cs" />
     <Compile Include="Models\CardTypes\CardTypeListModel.cs" />
     <Compile Include="Models\CardTypes\CardTypeModel.cs" />
+    <Compile Include="Models\Customers\CustomerRoleModel.cs" />
     <Compile Include="Models\Customers\CustomerListModel.cs" />
     <Compile Include="Models\Customers\ApplyCustomerRoleModel.cs" />
     <Compile Include="Models\Customers\CustomerModel.cs" />

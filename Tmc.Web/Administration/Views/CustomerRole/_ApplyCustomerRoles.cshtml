@@ -1,15 +1,21 @@
-﻿@model IList<ApplyCustomerRoleModel>
+﻿@model ApplyCustomerRoleModel
 @using Tmc.Admin.Models.Customers;
 
-@if(Model != null && Model.Count > 0)
+@if(Model != null && Model.AllRoles.Count > 0)
 {
-    <ul>
-        @for (int i = 0; i < Model.Count; i++)
-        {
-            <li>
-                @Html.CheckBoxFor(m => m[i].Selected)
-                <span>@Model[i].RoleName</span>
-            </li>
-        }
-    </ul>
+    using (Html.BeginForm(null, null, FormMethod.Post, new {id = "form-apply-customer-role" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.CustomerId)
+        <ul>
+            @for (int i = 0; i < Model.AllRoles.Count; i++)
+            {
+                 @Html.HiddenFor(model => model.AllRoles[i].Id)
+                <li>
+                    @Html.CheckBoxFor(m => m.AllRoles[i].Selected)
+                    <span>@Model.AllRoles[i].Name</span>
+                </li>
+            }
+        </ul>
+    }
 }

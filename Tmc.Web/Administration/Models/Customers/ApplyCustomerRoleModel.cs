@@ -13,11 +13,11 @@ namespace Tmc.Admin.Models.Customers
     {
         public ApplyCustomerRoleModel()
         {
+            AllRoles = new List<CustomerRoleModel>();
         }
         public string CustomerCode { get; set; }
         public string CustomerName { get; set; }
         public int CustomerId { get; set; }
-        public string RoleName { get; set; }
-        public bool Selected { get; set; }
+        public IList<CustomerRoleModel> AllRoles { get; set; }
     }
 }

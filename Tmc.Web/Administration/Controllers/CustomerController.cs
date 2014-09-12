@@ -42,7 +42,7 @@ namespace Tmc.Admin.Controllers
         [HttpPost]
         public ActionResult List(DataSourceRequest command, CustomerListModel model)
         {
-            var customers = _customerBiz.GetAllCustomers(model.SearchUserName, model.SearchFullName, command.Page, command.PageSize);
+            var customers = _customerBiz.GetAllCustomers(model.SearchUserName, model.SearchUserCode, command.Page, command.PageSize);
             var gridModel = new DataSourceResult
             {
                 Data = customers.Select(x =>
