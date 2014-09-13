@@ -13,5 +13,7 @@ namespace Tmc.BLL.Contract.Customers
     {
 
         LoginResult ValidateUserForLogin(string userName, string password, out Customer customer);
+
+        ChangePasswordResult ChangePassword(int customerId, string oldPassword, string newPassword);
     }
 }

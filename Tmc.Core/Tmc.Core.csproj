@@ -102,6 +102,7 @@
     <Compile Include="Domain\Extensions\CustomerExtensions.cs" />
     <Compile Include="Domain\Transactions\WithdrawTransaction.cs" />
     <Compile Include="Domain\Transactions\DepositTransaction.cs" />
+    <Compile Include="Enums\ChangePasswordResult.cs" />
     <Compile Include="Enums\LoginResult.cs" />
     <Compile Include="Infrastructure\AppDomainTypeFinder.cs" />
     <Compile Include="Infrastructure\EngineContext.cs" />

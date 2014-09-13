@@ -44,7 +44,7 @@ namespace Tmc.Web.Framework.FilterAttributes
                 {
                     foreach(var role in roles)
                     {
-                        if(currentUser.IsInCustomerRole(role))
+                        if(currentUser.IsInCustomerRole(role.Trim()))
                         {
                             bAuthorized = true;
                             break;

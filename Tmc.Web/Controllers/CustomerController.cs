@@ -5,18 +5,23 @@ using System.Web;
 using System.Web.Mvc;
 using Tmc.BLL.Contract.Authentication;
 using Tmc.BLL.Contract.Customers;
+using Tmc.Core.Common;
 using Tmc.Core.Domain.Customers;
 using Tmc.Core.Enums;
+using Tmc.Web.Framework.FilterAttributes;
 using Tmc.Web.Models.Customers;
+using Tmc.Core.Domain.Extensions;
 
 namespace Tmc.Web.Controllers
 {
     public class CustomerController : BaseFrontEndController
     {
+        private readonly IWorkContext _workContext;
         private readonly IAuthenticationBiz _authenticationBiz;
         private readonly ICustomerRegistrationService _customerRegistrationService;
-        public CustomerController(IAuthenticationBiz authenticationBiz, ICustomerRegistrationService customerRegistrationService)
+        public CustomerController(IWorkContext workContext, IAuthenticationBiz authenticationBiz, ICustomerRegistrationService customerRegistrationService)
         {
+            this._workContext = workContext;
             this._authenticationBiz = authenticationBiz;
             this._customerRegistrationService = customerRegistrationService;
         }
@@ -64,6 +69,39 @@ namespace Tmc.Web.Controllers
         {
             _authenticationBiz.SignOut();
             return RedirectToRoute("HomePage");
+        }
+
+        [AdminAuthorize("RegisteredUsers, Administrators")]
+        public ActionResult ChangePassword()
+        {
+            var model = new ChangePasswordModel();
+            return View(model);
+        }
+        [HttpPost]
+        [AdminAuthorize("RegisteredUsers, Administrators")]
+       
+        public ActionResult ChangePassword(ChangePasswordModel model)
+        {
+            model.ErrorMessage.Clear();
+            var customer = _workContext.CurrentCustomer;
+            var result = _customerRegistrationService.ChangePassword(customer.Id,model.OldPassword, model.NewPassword);
+            model.Success = result == ChangePasswordResult.Successful;
+            switch(result)
+            {
+                case ChangePasswordResult.Successful:
+                    model.Success = true;
+                    break;
+                case ChangePasswordResult.CustomerNotExist:
+                    model.ErrorMessage.Add("Customer not found");
+                    break;
+                case ChangePasswordResult.OldPasswordNotValid:
+                    model.ErrorMessage.Add("Old password not valid");
+                    break;
+                default:
+                    model.ErrorMessage.Add("Cannot change password. Please try again later");
+                    break;
+            }
+            return View(model);
         }
     }
 }

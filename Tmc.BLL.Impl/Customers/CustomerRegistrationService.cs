@@ -43,5 +43,27 @@ namespace Tmc.BLL.Impl.Customers
             else
                 return LoginResult.WrongPassword;
         }
+
+        public ChangePasswordResult ChangePassword(int customerId, string oldPassword, string newPassword)
+        {
+            var customer = _customerBiz.GetCustomerById(customerId);
+            if(customer == null)
+            {
+                return ChangePasswordResult.CustomerNotExist;
+            }
+            string oldPwd = _encryptionService.CreatePasswordHash(oldPassword, customer.PasswordSalt);
+           
+            bool oldPasswordIsValid = oldPwd == customer.Password;
+            if (!oldPasswordIsValid)
+            {
+                return ChangePasswordResult.OldPasswordNotValid;
+            }
+            string saltKey = _encryptionService.CreateSaltKey(5);
+            customer.PasswordSalt = saltKey;
+            customer.Password = _encryptionService.CreatePasswordHash(newPassword, saltKey);
+            _customerBiz.UpdateCustomer(customer);
+
+            return ChangePasswordResult.Successful;
+        }
     }
 }
