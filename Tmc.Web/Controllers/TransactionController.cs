@@ -12,46 +12,45 @@ using Tmc.Core.Domain.Customers;
 using Tmc.Web.Framework.Common;
 using Tmc.Web.Framework.FilterAttributes;
 using Tmc.Web.Framework.KendoUi;
+using Tmc.Web.Models.Transactions;
 
 namespace Tmc.Web.Controllers
 {
+    [AdminAuthorize("RegisteredUsers")]
     public class TransactionController : BaseFrontEndController
     {
-        private readonly ITransactionBiz _depositTransactionBiz;
+        private readonly ITransactionBiz _transactionBiz;
         private readonly IExportService _exportService;
         private readonly IWorkContext _workContext;
-        public TransactionController(ITransactionBiz depositTransactionBiz, IExportService exportService, IWorkContext workContext)
+        public TransactionController(ITransactionBiz transactionBiz, IExportService exportService, IWorkContext workContext)
         {
-            this._depositTransactionBiz = depositTransactionBiz;
+            this._transactionBiz = transactionBiz;
             this._exportService = exportService;
             this._workContext = workContext;
         }
         //
         // GET: /Transaction/
-        public ActionResult List(int? customerId)
+        public ActionResult List()
         {
             var currentCustomer = _workContext.CurrentCustomer;
-            if (currentCustomer == null)
+            if (currentCustomer == null || currentCustomer.Id <= 0)
             {
                 return new EmptyResult();
             }
-            if (customerId == null || customerId.Value <= 0 || customerId.Value != currentCustomer.Id)
-            {
-                return new EmptyResult();
-            }
-            return  View(customerId.Value);
+            var model = new DepositTransactionListModel();
+            return View(model);
         }
 
         [HttpPost]
-        public ActionResult List(DataSourceRequest command, int? customerId)
+        public ActionResult List(DataSourceRequest command, DepositTransactionListModel model)
         {
             var currentCustomer = _workContext.CurrentCustomer;
-            if(currentCustomer == null || customerId == null || customerId.Value != currentCustomer.Id)
+            if (currentCustomer == null || currentCustomer.Id <= 0)
             {
                 return new NullJsonResult();
             }
             
-            var customers = _depositTransactionBiz.GetAllDepositTransactions(currentCustomer.Id, null, null, null, command.Page, command.PageSize);
+            var customers = _transactionBiz.GetAllDepositTransactions(currentCustomer.Id, null, model.DateFrom, model.DateTo, command.Page, command.PageSize);
             var gridModel = new DataSourceResult
             {
                 Data = customers.Select(x => new {
@@ -72,7 +71,7 @@ namespace Tmc.Web.Controllers
         {
             try
             {
-                var transactions = _depositTransactionBiz.GetAllDepositTransactions(null, null, null, null);
+                var transactions = _transactionBiz.GetAllDepositTransactions(null, null, null, null);
 
                 byte[] bytes = null;
                 using (var stream = new MemoryStream())
@@ -87,5 +86,42 @@ namespace Tmc.Web.Controllers
                 return RedirectToAction("List");
             }
         }
+
+
+        public ActionResult WithdrawList()
+        {
+            var currentCustomer = _workContext.CurrentCustomer;
+            if (currentCustomer == null || currentCustomer.Id <= 0)
+            {
+                return new EmptyResult();
+            }
+            var model = new WithdrawTransactionListModel();
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult WithdrawList(DataSourceRequest command, WithdrawTransactionListModel model)
+        {
+            var currentCustomer = _workContext.CurrentCustomer;
+            if (currentCustomer == null || currentCustomer.Id <= 0)
+            {
+                return new EmptyResult();
+            }
+            var customers = _transactionBiz.GetAllWithdrawTransactions(currentCustomer.Id, null, model.DateFrom, model.DateTo, command.Page, command.PageSize);
+            var gridModel = new DataSourceResult
+            {
+                Data = customers.Select(x => new
+                {
+                    CustomerId = x.CustomerId,
+                    CustomerName = x.Customer.UserName,
+                    CreatedOnUtc = x.CreatedOnUtc,
+                    Points = x.Points,
+                    Reason = x.Reason
+                }),
+                Total = customers.TotalCount
+            };
+            return Json(gridModel);
+        }
+
 	}
 }

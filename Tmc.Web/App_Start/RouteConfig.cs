@@ -21,6 +21,21 @@ namespace Tmc.Web
             var routePublisher = EngineContext.Current.Resolve<IRouteRegistrar>();
             routePublisher.RegisterRoutes(routes);
 
+            routes.MapRoute("CustomerDashboard",
+            "Customer/Dashboard",
+            new { controller = "Customer", action = "Dashboard" },
+            new[] { "Tmc.Web.Controllers" });
+
+            routes.MapRoute("DepositTransactions",
+            "Transaction/Deposit",
+            new { controller = "Transaction", action = "List" },
+            new[] { "Tmc.Web.Controllers" });
+
+            routes.MapRoute("WithdrawalTransactions",
+            "Transaction/Withdrawals",
+            new { controller = "Transaction", action = "WithdrawList" },
+            new[] { "Tmc.Web.Controllers" });
+
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
@@ -47,6 +62,8 @@ namespace Tmc.Web
             //                "logout",
             //                new { controller = "Customer", action = "Logout" },
             //                new[] { "Tmc.Web.Controllers" });
+
+
         }
     }
 }

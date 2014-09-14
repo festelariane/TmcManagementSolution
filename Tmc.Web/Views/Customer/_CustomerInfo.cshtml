@@ -1,0 +1,33 @@
+﻿@model CustomerInfoModel
+@using Tmc.Web.Models.Customers;
+@{
+    ViewBag.Title = "Customer Info";
+}
+<div>
+    <table>
+        <tr>
+            <td>@Html.LabelFor(m => m.FullName)</td>
+            <td>@Model.FullName</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(m => m.CustomerCode)</td>
+            <td>@Model.CustomerCode</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(m => m.CardType)</td>
+            <td>@Model.CardType</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(m => m.CreatedOnUtc)</td>
+            <td>@Model.CreatedOnUtc</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(m => m.UpdatedOnUtc)</td>
+            <td>@Model.UpdatedOnUtc</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(m => m.LastActivityDateUtc)</td>
+            <td>@Model.LastActivityDateUtc</td>
+        </tr>
+    </table>
+</div>

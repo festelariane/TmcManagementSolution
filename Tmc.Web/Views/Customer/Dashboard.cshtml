@@ -1,0 +1,12 @@
+﻿@model CustomerDashboardModel
+@using Tmc.Web.Models.Customers;
+@using System.Web.Mvc.Html;
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+<div class="main-content">
+    @Html.Partial("_CustomerInfo", @Model.CustomerInfo)
+    @Html.Partial("~/Views/Transaction/_TransactionListing", @Model.DepositTransactionListModel)
+    @Html.Partial("~/Views/Transaction/_WithdrawTransactionListing", @Model.WithdrawTransactionListModel)
+</div>

@@ -1,45 +1,41 @@
-﻿@model DepositTransactionListModel
+﻿@model WithdrawTransactionListModel
 @using Tmc.Web.Models.Transactions;
 @{
-    ViewBag.Title = "_TransactionListing";
+    ViewBag.Title = "_WithdrawTransactionListing";
 }
 
-<div id="grid-transactions"></div>
+<div id="grid-withdraw-transactions"></div>
 
 <script type="text/x-kendo-template" id="transaction-listing-toolbar-template">
     <div class="toolbar">
-      
-        <label for="transaction-date-from">From:</label>
-        <input type="text" id="transaction-date-from" style="width: 150px" />
-        <label for="transaction-date-from">To:</label>
-        <input type="text" id="transaction-date-to" style="width: 150px" />
+        <label for="withdraw-transaction-date-from">From:</label>
+        <input type="text" id="withdraw-transaction-date-from" style="width: 150px" />
+        <label for="withdraw-transaction-date-to">To:</label>
+        <input type="text" id="withdraw-transaction-date-to" style="width: 150px" />
 
-        <a href="javascript:void(0)" class="k-button k-button-icontext" onclick="onSearchTransaction()">Search</a>
-
+        <a href="javascript:void(0)" class="k-button k-button-icontext" onclick="onSearchWithdrawTransaction()">Search</a>
     </div>
 </script>
 
 <script>
-  
-    function onSearchTransaction()
+    
+    function onSearchWithdrawTransaction()
     {
-        //var dateFrom = $("#transaction-date-from").data("kendoDateTimePicker").value();
-        //var dateTo = $("#transaction-date-to").data("kendoDateTimePicker").value();
-        var grid = $('#grid-transactions').data('kendoGrid');
+        var grid = $('#grid-withdraw-transactions').data('kendoGrid');
         grid.dataSource.page(1); //new search. Set page size to 1
         grid.dataSource.read();
     }
-    function additionalData() {
+    function additionalWithdrawData() {
         var dateFrom = null;
-        if ($("#transaction-date-from").data("kendoDatePicker") != null)
+        if ($("#withdraw-transaction-date-from").data("kendoDatePicker") != null)
         {
-            dateFrom = $("#transaction-date-from").data("kendoDatePicker").value();
+            dateFrom = $("#withdraw-transaction-date-from").data("kendoDatePicker").value();
         }
         var dateTo = null;
-        if ($("#transaction-date-to").data("kendoDatePicker") != null) {
-            dateTo = $("#transaction-date-to").data("kendoDatePicker").value();
+        if ($("#withdraw-transaction-date-to").data("kendoDatePicker") != null) {
+            dateTo = $("#withdraw-transaction-date-to").data("kendoDatePicker").value();
         }
-
+   
         return {
             DateFrom: dateFrom == null ? "" : dateFrom.toString(),
             DateTo: dateTo == null ? "" : dateTo.toString()
@@ -51,10 +47,10 @@
             {
                 transport: {
                     read:  {
-                        url: "@Html.Raw(Url.Action("List", "Transaction"))",
+                        url: "@Html.Raw(Url.Action("WithdrawList", "Transaction"))",
                         type: "POST",
                         dataType: "json",
-                        data: additionalData
+                        data: additionalWithdrawData
                 }
                 },
                 batch: true,
@@ -69,31 +65,26 @@
                             Id: { editable: false, type: "string", nullable: true },
                             CustomerId: { editable: false },
                             CustomerName: {},
-                            Amount: { editable: false, type: 'number' },
                             CreatedOnUtc: { editable: false, type: 'date', format: 'dd/MM/yyyy' },
                             Points: { editable: false, type: 'number'},
-                            ExchangeRate: { editable: false, type: 'number' }
+                            Reason: { editable: false, type: 'string' }
                         }
                     }
                 }
             });
 
-        $("#grid-transactions").kendoGrid({
+        $("#grid-withdraw-transactions").kendoGrid({
             dataSource: transactionDataSource,
             pageable: true,
             toolbar: kendo.template($("#transaction-listing-toolbar-template").html()),
             columns: [
                 {
-                    field: "Amount",
-                    title: "Amount"
-                },
-                {
                     field: "Points",
                     title: "Points"
                 },
                 {
-                    field: "ExchangeRate",
-                    title: "ExchangeRate"
+                    field: "Reason",
+                    title: "Reason"
                 },
                 {
                     field: "CreatedOnUtc",
@@ -102,12 +93,12 @@
                 },
             ]
         });
-
-        $("#transaction-date-from").kendoDatePicker({
+      
+        $("#withdraw-transaction-date-from").kendoDatePicker({
             animation: false,
             format: "MM/dd/yyyy"
         });
-        $("#transaction-date-to").kendoDatePicker({
+        $("#withdraw-transaction-date-to").kendoDatePicker({
             animation: false,
             format: "MM/dd/yyyy"
         });

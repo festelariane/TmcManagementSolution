@@ -11,6 +11,7 @@ using Tmc.Core.Enums;
 using Tmc.Web.Framework.FilterAttributes;
 using Tmc.Web.Models.Customers;
 using Tmc.Core.Domain.Extensions;
+using Tmc.Web.Extensions;
 
 namespace Tmc.Web.Controllers
 {
@@ -101,6 +102,25 @@ namespace Tmc.Web.Controllers
                     model.ErrorMessage.Add("Cannot change password. Please try again later");
                     break;
             }
+            return View(model);
+        }
+
+        [AdminAuthorize("RegisteredUsers")]
+        public ActionResult Dashboard()
+        {
+            var model = new CustomerDashboardModel();
+            var currentCustomer = _workContext.CurrentCustomer;
+
+            var customerInfoModel = new CustomerInfoModel();
+            var cardType = currentCustomer.CardType;
+            customerInfoModel.CardType = cardType != null ? cardType.Name : string.Empty;
+            customerInfoModel.CustomerCode = (cardType != null ? cardType.Prefix : string.Empty) + currentCustomer.CustomerCode;
+            customerInfoModel.FullName = currentCustomer.FullName;
+            customerInfoModel.CreatedOnUtc = currentCustomer.CreatedOnUtc;
+            customerInfoModel.UpdatedOnUtc = currentCustomer.UpdatedOnUtc;
+            customerInfoModel.LastActivityDateUtc = currentCustomer.LastActivityDateUtc;
+            
+            model.CustomerInfo = customerInfoModel;
             return View(model);
         }
     }
