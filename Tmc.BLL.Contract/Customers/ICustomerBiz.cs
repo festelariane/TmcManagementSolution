@@ -16,6 +16,7 @@ namespace Tmc.BLL.Contract.Customers
         void UpdateCustomer(Customer customer);
         Customer InsertCustomer(Customer customer);
         Customer GetCustomerByUserName(string username);
+        Customer GetCustomerByUserNameOrCode(string username);
 
         #region Customer roles
 

@@ -24,7 +24,7 @@ namespace Tmc.BLL.Impl.Customers
         public LoginResult ValidateUserForLogin(string userName, string password, out Customer validCustomer)
         {
             validCustomer = null;
-            var customer = _customerBiz.GetCustomerByUserName(userName);
+            var customer = _customerBiz.GetCustomerByUserNameOrCode(userName);
             if (customer == null)
                 return LoginResult.CustomerNotExist;
 

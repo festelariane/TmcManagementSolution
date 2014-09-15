@@ -125,6 +125,19 @@ namespace Tmc.BLL.Impl.Customers
             return customer;
         }
 
+        public virtual Customer GetCustomerByUserNameOrCode(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+                return null;
+
+            var query = from c in _customerRepository.Table
+                        orderby c.Id
+                        where c.UserName == username || c.CustomerCode == username
+                        select c;
+            var customer = query.FirstOrDefault();
+            return customer;
+        }
+
         #region Customer roles
 
         /// <summary>

@@ -5,13 +5,14 @@
 {
     <div class="top-nav">
         <span>Hello, @Model.CustomerName</span>
-        <a href="@Url.RouteUrl("CustomerDashboard")">Dashboard</a>
+        
         @if(Model.IsAdmin)
         {
             <a href="@Url.RouteUrl("AdminHomePage")">Go to Admin Panel</a>
         }
         else
         {
+            <a href="@Url.RouteUrl("CustomerDashboard")">Dashboard</a>
             <a href="@Url.RouteUrl("DepositTransactions")">Deposit</a>
             <a href="@Url.RouteUrl("WithdrawalTransactions")">Withdrawals</a>
         }
