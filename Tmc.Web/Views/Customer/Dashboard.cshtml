@@ -6,7 +6,11 @@
 }
 
 <div class="main-content">
+    <h2>Customer info</h2>
     @Html.Partial("_CustomerInfo", @Model.CustomerInfo)
-    @Html.Partial("~/Views/Transaction/_TransactionListing", @Model.DepositTransactionListModel)
-    @Html.Partial("~/Views/Transaction/_WithdrawTransactionListing", @Model.WithdrawTransactionListModel)
+    
+    <h2>Deposit</h2>
+    @Html.Partial("~/Views/Transaction/_TransactionListing.cshtml", @Model.DepositTransactionListModel)
+    <h2>Withdrawals</h2>
+    @Html.Partial("~/Views/Transaction/_WithdrawTransactionListing.cshtml", @Model.WithdrawTransactionListModel)
 </div>

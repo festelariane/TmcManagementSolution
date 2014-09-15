@@ -31,11 +31,11 @@
 </div>
 
 <script type="text/x-kendo-template" id="deposit-row-template">
-    <a id="btn-customer-deposit" href="javascript:void(0)" onclick="onCustomerDeposit(#=Id#)">Deposit</a>
-    <a id="btn-customer-withdraw" href="javascript:void(0)" onclick="onCustomerWithdraw(#=Id#)">Withdraw</a>
-    <a id="btn-customer-deposit" href="@Url.Action("List", "Transaction")/?customerId=#=Id#">Transaction Listing</a>
-    <a id="btn-customer-deposit" href="@Url.Action("WithdrawList", "Transaction")/?customerId=#=Id#">Withdraw Transaction Listing</a>
-    <a id="btn-customer-withdraw" href="javascript:void(0)" onclick="onAssigningRole(#=Id#)">Assign Roles</a>
+    <a id="btn-customer-deposit" class="k-button" href="javascript:void(0)" onclick="onCustomerDeposit(#=Id#)">Deposit</a>
+    <a id="btn-customer-withdraw" class="k-button"  href="javascript:void(0)" onclick="onCustomerWithdraw(#=Id#)">Withdraw</a>
+    <a id="btn-customer-deposit" class="k-button" href="@Url.Action("List", "Transaction")/?customerId=#=Id#">Transaction Listing</a>
+    <a id="btn-customer-deposit" class="k-button" href="@Url.Action("WithdrawList", "Transaction")/?customerId=#=Id#">Withdraw Transaction Listing</a>
+    <a id="btn-customer-withdraw" class="k-button" href="javascript:void(0)" onclick="onAssigningRole(#=Id#)">Assign Roles</a>
 </script>
 
 <script type="text/x-kendo-template" id="customer-searchcriteria-toolbar-template">
@@ -304,13 +304,14 @@
             columns: [
                 {
                     title:"Action",
+                    width:"350px",
                     template: kendo.template($("#deposit-row-template").html())
                     //template: '<a id="btn-customer-deposit" href="javascript:void(0)" onclick="onCustomerDeposit(#=Id#)">Deposit</a>'
                 },
                 { title: "CustomerCode",
                 template: '#=CardType.Prefix##=CustomerCode#'
                 },
-                { field: "UserName", title: "UserName" },
+                { field: "UserName", title: "UserName", width:"150px"},
                 { field: "FullName", title: "FullName" },
                 {
                     field: "CardTypeId",
@@ -320,10 +321,10 @@
                     template:"#: CardType.Name #"
                     //template:kendo.template($("#myTemplate").html())
                 },
-                { field: "Points", title: "Points"},
+                { field: "Points", title: "Points", width:"100px"},
                 { field: "CreatedOnUtc", title: "CreatedOnUtc",format:"{0:dd-MM-yyyy}"  },
-                { field: "UpdatedOnUtc", title: "UpdatedOnUtc" ,format:"{0:dd-MM-yyyy}"},
-                { field: "LastActivityDateUtc", title: "LastActivityDateUtc",format:"{0:dd-MM-yyyy}" },
+                //{ field: "UpdatedOnUtc", title: "UpdatedOnUtc" ,format:"{0:dd-MM-yyyy}"},
+                //{ field: "LastActivityDateUtc", title: "LastActivityDateUtc",format:"{0:dd-MM-yyyy}" },
                 { command: ["edit", "destroy"], title: "&nbsp;", width: "200px" }],
             editable: "inline",
             edit:function(e)

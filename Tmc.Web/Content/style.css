@@ -46,6 +46,11 @@ label, span
 {
     padding:10px 5px 10px 5px;
 }
+.top-nav a
+{
+    padding: 5px;
+    color:#FF3300;
+}
 .main-content
 {
     padding:0 5px;

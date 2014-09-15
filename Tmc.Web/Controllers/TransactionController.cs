@@ -87,7 +87,6 @@ namespace Tmc.Web.Controllers
             }
         }
 
-
         public ActionResult WithdrawList()
         {
             var currentCustomer = _workContext.CurrentCustomer;
