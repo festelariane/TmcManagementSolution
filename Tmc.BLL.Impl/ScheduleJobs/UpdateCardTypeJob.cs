@@ -11,7 +11,7 @@ namespace Tmc.BLL.Impl.ScheduleJobs
     {
         public void Execute(IJobExecutionContext context)
         {
-            
+            Console.WriteLine("Update cardtype job: started");
         }
     }
 }

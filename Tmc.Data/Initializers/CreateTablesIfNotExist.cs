@@ -68,5 +68,10 @@ namespace Tmc.Data.Initializers
                 throw new ApplicationException("No database instance");
             }
         }
+
+        public virtual void Seed(TContext context)
+        {
+
+        }
     }
 }

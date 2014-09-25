@@ -303,6 +303,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\kendo\2014.1.318\images\kendoui.ttf" />
     <Content Include="Content\kendo\2014.1.318\images\kendoui.woff" />
+    <None Include="Properties\PublishProfiles\gialuc.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Images\banner.jpg" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -858,6 +859,10 @@
     <ProjectReference Include="..\Tmc.BLL.Contract\Tmc.BLL.Contract.csproj">
       <Project>{8fe96b2a-c90b-4864-a820-9dc903180b52}</Project>
       <Name>Tmc.BLL.Contract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tmc.BLL.Impl\Tmc.BLL.Impl.csproj">
+      <Project>{023bd424-ae8e-43a8-bbfb-71b17c61ac13}</Project>
+      <Name>Tmc.BLL.Impl</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tmc.Core\Tmc.Core.csproj">
       <Project>{bab2d2c1-24e5-4776-80ab-6dc74ac9948a}</Project>

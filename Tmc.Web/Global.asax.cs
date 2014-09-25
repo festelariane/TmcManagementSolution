@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Tmc.BLL.Impl.ScheduleJobs;
 using Tmc.Core.Infrastructure;
 using Tmc.Web.Framework.Common;
 using Tmc.Web.Framework.FluentValidation;
@@ -33,6 +34,9 @@ namespace Tmc.Web
             var validationProvider = new FluentValidationModelValidatorProvider(validationProviderFactory);
             validationProvider.AddImplicitRequiredValidator = false;
             ModelValidatorProviders.Providers.Add(validationProvider);
+
+            var jobs = EngineContext.Current.ContainerManager.Resolve<TestAllJobs>();
+            jobs.Start();
         }
     }
 }

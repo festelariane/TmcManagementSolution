@@ -25,6 +25,12 @@ using Tmc.BLL.Impl.Authentication;
 using System.Web;
 using Tmc.BLL.Impl.ImportExport;
 using Tmc.BLL.Contract.ImportExport;
+using Quartz.Spi;
+using Tmc.Web.Framework.Scheduler;
+using Quartz.Impl;
+using Quartz;
+using System.Reflection;
+using Tmc.BLL.Impl.ScheduleJobs;
 
 namespace Tmc.Web.Framework
 {
@@ -76,6 +82,17 @@ namespace Tmc.Web.Framework
             dataProvider.InitConnectionFactory();
 
             builder.Register<IDbContext>(c => new TmcObjectContext(dataProviderSettings.DataConnectionString)).InstancePerRequest();
+
+
+            builder.Register(c => new StdSchedulerFactory().GetScheduler())
+               .As<IScheduler>()
+               .InstancePerDependency(); // #1
+            builder.Register(c => new AutofacJobFactory(EngineContext.Current.ContainerManager.Container))
+                   .As<IJobFactory>();          // #2
+            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+                   .Where(p => typeof(IJob).IsAssignableFrom(p))
+                   .PropertiesAutowired();      // #3
+            builder.RegisterType(typeof(TestAllJobs)).As<TestAllJobs>();
         }
 
         public int Order
